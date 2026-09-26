@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Details - ApexMart</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff5e00'><path d='M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z'/></svg>">
+
+  <!-- Bootstrap 5.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/product-detail.css">
+</head>
+<body>
+
+  <!--1. Top Announcement Bar-->
+  <div class="top-bar py-2 d-none d-md-block">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-3">
+        <span><i class="bi bi-truck text-warning me-1"></i> Free Express Shipping on orders over $50</span>
+        <span class="text-secondary">|</span>
+        <span><i class="bi bi-shield-check text-warning me-1"></i> 100% Genuine Guaranteed</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <a href="../seller.html"><i class="bi bi-shop me-1 text-warning"></i> Open a Shop</a>
+        <span class="text-secondary">|</span>
+        <a href="#"><i class="bi bi-headset me-1 text-warning"></i> 24/7 Support: 1-800-APEX</a>
+        <span class="text-secondary">|</span>
+        <div class="dropdown d-inline">
+          <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            USD ($)
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+            <li><a class="dropdown-item active" href="#">USD ($)</a></li>
+            <li><a class="dropdown-item" href="#">EUR (€)</a></li>
+            <li><a class="dropdown-item" href="#">GBP (£)</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Main Navigation Bar -->
+  <nav class="navbar navbar-expand-lg main-navbar">
+    <div class="container">
+      <!-- Brand Logo -->
+      <a class="navbar-brand" href="index.html">
+        <span class="brand-badge"><i class="bi bi-bag-check-fill"></i></span>
+        Apex<span class="highlight">Mart</span>
+      </a>
+
+      <!-- Mobile Toggler -->
+      <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-list fs-2 text-dark"></i>
+      </button>
+
+      <!-- Navbar Collapsible Content -->
+      <div class="collapse navbar-collapse" id="navbarContent">
+
+        <!-- Search Bar (In Navigation) -->
+        <div class="mx-lg-auto my-2 my-lg-0 search-wrapper">
+          <form class="search-input-group" id="navbarSearchForm" onsubmit="return false;">
+            <select class="category-select d-none d-sm-block" id="searchCategorySelect">
+              <option value="all">All Categories</option>
+              <option value="electronics">Electronics</option>
+              <option value="audio">Audio & Sound</option>
+              <option value="wearables">Wearables</option>
+              <option value="fashion">Fashion</option>
+              <option value="home">Home & Living</option>
+            </select>
+            <input type="text" class="search-input" id="navbarSearchInput" placeholder="Search 10,000+ premium products..." autocomplete="off">
+            <button class="btn-search" type="button" id="btnNavbarSearch" title="Search">
+              <i class="bi bi-search"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Navigation Links & Action Controls -->
+        <ul class="navbar-nav align-items-lg-center gap-lg-2 ms-auto">
+          <!-- Home -->
+          <li class="nav-item">
+            <a class="nav-link-custom" href="index.html">
+              <i class="bi bi-house-door"></i> Home
+            </a>
+          </li>
+
+          <!-- Become a Seller -->
+          <li class="nav-item">
+            <a class="btn-orange-outline btn-sm text-nowrap" href="../seller/seller_form.html">
+              <i class="bi bi-shop-window"></i> Become a Seller
+            </a>
+          </li>
+
+          <!-- Login Button -->
+          <li class="nav-item">
+            <a class="btn btn-charcoal btn-sm" href="../account/login.html">
+              <i class="bi bi-person"></i> Login
+            </a>
+          </li>
+
+          <!-- Add to Cart Trigger -->
+          <li class="nav-item">
+            <button class="cart-trigger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" title="Open Shopping Cart">
+              <i class="bi bi-cart3 fs-5"></i>
+              <span class="d-none d-sm-inline">Cart</span>
+              <span class="cart-badge" id="cartCountBadge">0</span>
+            </button>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- 3. Breadcrumb Navigation -->
+  <section class="breadcrumb-section">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" id="productBreadcrumb">
+          <li class="breadcrumb-item"><a href="index.html"><i class="bi bi-house-door-fill"></i> Home</a></li>
+          <li class="breadcrumb-item"><a href="#" id="breadcrumbCategory">Category</a></li>
+          <li class="breadcrumb-item active" aria-current="page" id="breadcrumbProduct">Product Name</li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- 4. Product Detail Section -->
+  <section class="product-detail-section">
+    <div class="container">
+      <div class="row g-4 g-lg-5">
+
+        <!-- Left: Product Image with Zoom -->
+        <div class="col-lg-6">
+          <div class="product-image-card">
+            <!-- Verified Badge -->
+            <div class="verified-badge-wrap">
+              <span class="verified-badge"><i class="bi bi-patch-check-fill"></i> VERIFIED DEAL RECOMMENDATION</span>
+            </div>
+            <!-- Main Image Container -->
+            <div class="main-image-container" id="mainImageContainer">
+              <img src="" alt="Product Image" class="main-product-image" id="mainProductImage">
+              <div class="zoom-lens" id="zoomLens"></div>
+            </div>
+            <!-- Zoom Hint -->
+            <div class="zoom-hint">
+              <i class="bi bi-search"></i> Hover to Zoom | Click to Expand
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Product Info -->
+        <div class="col-lg-6">
+          <div class="product-detail-info">
+            <!-- Product Badge -->
+            <div class="detail-badge-wrap" id="detailBadgeWrap"></div>
+
+            <!-- Product Title -->
+            <h1 class="detail-product-title" id="detailProductTitle">Product Name</h1>
+
+            <!-- Rating -->
+            <div class="detail-rating" id="detailRating">
+              <span class="stars-list"></span>
+              <span class="rating-value"></span>
+              <span class="rating-count"></span>
+            </div>
+
+            <!-- Category Tag -->
+            <div class="detail-category-tag">
+              <a href="#" class="category-tag-link" id="detailCategoryTag">
+                <i class="bi bi-folder-fill"></i> <span></span>
+              </a>
+            </div>
+
+            <!-- Description -->
+            <div class="detail-description" id="detailDescription">
+              <p></p>
+            </div>
+
+            <!-- Key Features -->
+            <div class="detail-features" id="detailFeatures">
+              <h6 class="features-title"><i class="bi bi-lightning-charge-fill"></i> Key Highlights</h6>
+              <ul class="features-list" id="featuresList"></ul>
+            </div>
+
+            <!-- Price Block -->
+            <div class="detail-price-block" id="detailPriceBlock">
+              <div class="price-row">
+                <span class="detail-current-price" id="detailCurrentPrice"></span>
+                <span class="detail-old-price" id="detailOldPrice"></span>
+                <span class="detail-savings-badge" id="detailSavingsBadge"></span>
+              </div>
+              <div class="stock-status" id="detailStockStatus">
+                <i class="bi bi-check-circle-fill"></i> In Stock — Ships within 24 hours
+              </div>
+            </div>
+
+            <!-- Quantity & Actions -->
+            <div class="detail-actions">
+              <div class="d-flex align-items-center gap-3 mb-3">
+                <label class="fw-bold small">Quantity:</label>
+                <div class="qty-control qty-control-lg">
+                  <button class="qty-btn" type="button" id="qtyMinus">-</button>
+                  <input type="number" id="productQty" value="1" min="1" max="99" class="qty-val border-0">
+                  <button class="qty-btn" type="button" id="qtyPlus">+</button>
+                </div>
+              </div>
+
+              <div class="d-flex flex-column flex-sm-row gap-2">
+                <button class="btn btn-orange btn-lg flex-grow-1 py-3" id="btnBuyNow">
+                  <i class="bi bi-bag-check-fill"></i> Buy Now
+                </button>
+                <button class="btn btn-add-cart-detail" id="btnAddToCart">
+                  <i class="bi bi-cart-plus"></i> Add to Cart
+                </button>
+                <button class="btn btn-wishlist-detail" id="btnWishlist">
+                  <i class="bi bi-heart"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Trust Signals -->
+            <div class="detail-trust-signals">
+              <div class="trust-item">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>Secure Checkout</span>
+              </div>
+              <div class="trust-item">
+                <i class="bi bi-truck"></i>
+                <span>Free Shipping</span>
+              </div>
+              <div class="trust-item">
+                <i class="bi bi-arrow-repeat"></i>
+                <span>30-Day Returns</span>
+              </div>
+              <div class="trust-item">
+                <i class="bi bi-award"></i>
+                <span>Genuine Product</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Recommended Products Section -->
+  <section class="recommended-section">
+    <div class="container">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title"><i class="bi bi-lightning-charge-fill text-warning"></i> Top Alternatives in <span id="recommendedCategoryName">this Category</span></h2>
+          <p class="section-subtitle mb-0">Handpicked top-rated options with similar features & competitive pricing</p>
+        </div>
+      </div>
+
+      <div class="recommended-grid" id="recommendedProductsGrid">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="row g-4">
+
+        <!-- Brand & About -->
+        <div class="col-lg-4 col-md-6">
+          <div class="footer-brand">
+            <span class="brand-badge"><i class="bi bi-bag-check-fill"></i></span>
+            Apex<span class="highlight">Mart</span>
+          </div>
+          <p class="footer-desc">
+            Your premier multi-vendor marketplace connecting verified sellers and passionate shoppers worldwide. Experience effortless online shopping with lightning-fast delivery and top-tier customer security.
+          </p>
+          <div class="social-links">
+            <a href="#" class="social-icon" title="Twitter / X"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" class="social-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="social-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" class="social-icon" title="YouTube"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+
+        <!-- Shop Categories -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h5 class="footer-title">Categories</h5>
+          <ul class="footer-links">
+            <li><a href="index.html"><i class="bi bi-chevron-right small"></i> Electronics</a></li>
+            <li><a href="index.html"><i class="bi bi-chevron-right small"></i> Audio & Sound</a></li>
+            <li><a href="index.html"><i class="bi bi-chevron-right small"></i> Wearables</a></li>
+            <li><a href="index.html"><i class="bi bi-chevron-right small"></i> Fashion & Bags</a></li>
+            <li><a href="index.html"><i class="bi bi-chevron-right small"></i> Home & Living</a></li>
+          </ul>
+        </div>
+
+        <!-- Seller Hub & Company -->
+        <div class="col-lg-2 col-md-6 col-6">
+          <h5 class="footer-title">Seller Hub</h5>
+          <ul class="footer-links">
+            <li><a href="#"><i class="bi bi-chevron-right small"></i> Sell on ApexMart</a></li>
+            <li><a href="#"><i class="bi bi-chevron-right small"></i> Seller Dashboard</a></li>
+            <li><a href="#"><i class="bi bi-chevron-right small"></i> Seller Policies</a></li>
+            <li><a href="#"><i class="bi bi-chevron-right small"></i> Fulfillment Center</a></li>
+            <li><a href="#"><i class="bi bi-chevron-right small"></i> Affiliate Program</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter & Payment -->
+        <div class="col-lg-4 col-md-6">
+          <h5 class="footer-title">Stay Updated</h5>
+          <p class="footer-desc mb-3">Subscribe to receive exclusive drops, weekly flash sales, and seller tips directly in your inbox.</p>
+          <form class="newsletter-form mb-4" onsubmit="event.preventDefault(); showToast('Subscribed to newsletter successfully!'); this.reset();">
+            <div class="input-group">
+              <input type="email" class="form-control" placeholder="Enter your email address" required>
+              <button class="btn btn-orange" type="submit">Subscribe</button>
+            </div>
+          </form>
+
+          <div class="d-flex align-items-center gap-2">
+            <span class="small text-white-50">Safe Payments:</span>
+            <div class="payment-badges">
+              <span class="payment-badge"><i class="bi bi-credit-card"></i> Visa</span>
+              <span class="payment-badge"><i class="bi bi-credit-card-2-front"></i> MC</span>
+              <span class="payment-badge"><i class="bi bi-paypal"></i> PayPal</span>
+              <span class="payment-badge"><i class="bi bi-apple"></i> Apple Pay</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer Bottom Copyright -->
+      <div class="footer-bottom d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+        <p class="mb-0 text-secondary">
+          &copy; 2026 ApexMart Marketplace Inc. All rights reserved. Designed with Bootstrap, CSS & JS.
+        </p>
+        <div class="d-flex gap-3">
+          <a href="#" class="text-secondary text-decoration-none small">Privacy Policy</a>
+          <a href="#" class="text-secondary text-decoration-none small">Terms of Service</a>
+          <a href="#" class="text-secondary text-decoration-none small">Security</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Offcanvas Shopping Cart Drawer -->
+  <div class="offcanvas offcanvas-end cart-offcanvas" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="cartOffcanvasLabel">
+        <i class="bi bi-cart3 text-warning"></i> Shopping Cart (<span id="cartDrawerCount">0</span>)
+      </h5>
+      <button type="button" class="btn-close text-reset shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column p-0">
+      <div class="p-3 flex-grow-1 overflow-auto" id="cartItemsContainer">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="cart-footer-box" id="cartFooterSection">
+        <div class="cart-summary-line">
+          <span>Subtotal</span>
+          <span class="fw-bold" id="cartSubtotalText">$0.00</span>
+        </div>
+        <div class="cart-summary-line">
+          <span>Estimated Shipping</span>
+          <span class="text-success fw-bold" id="cartShippingText">FREE</span>
+        </div>
+        <div class="cart-total-line">
+          <span>Grand Total</span>
+          <span class="text-warning" id="cartTotalText">$0.00</span>
+        </div>
+        <button class="btn btn-orange w-100 mt-3 py-2" onclick="handleCheckout()">
+          <i class="bi bi-shield-check"></i> Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full-Screen Image Modal -->
+  <div class="modal fade" id="imageExpandModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content bg-dark border-0">
+        <div class="modal-header border-0">
+          <h6 class="modal-title text-white"><i class="bi bi-arrows-fullscreen"></i> Full View</h6>
+          <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center p-4">
+          <img src="" alt="Full Product View" class="img-fluid rounded-3" id="expandedImage" style="max-height: 75vh; object-fit: contain;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Toast Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast custom-toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body d-flex align-items-center gap-2" id="toastMessage">
+          <i class="bi bi-check-circle-fill text-warning fs-5"></i>
+          <span>Item added to cart!</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5.3 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+  <!-- Application Logic Scripts -->
+  <script src="../js/products.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/product-detail.js"></script>
+
+</body>
+</html>
