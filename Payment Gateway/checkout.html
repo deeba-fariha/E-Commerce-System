@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Apex Mart</title>
+<link rel="stylesheet" href="checkout.css">
+<script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">A</span>
+      <span class="brand-name">Apex Mart</span>
+    </div>
+    <div class="secure-note">
+      <svg viewBox="0 0 20 20"><path d="M10 2.5 4 5v4.5c0 4 2.6 6.9 6 8 3.4-1.1 6-4 6-8V5l-6-2.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      Secure checkout
+    </div>
+  </header>
+
+  <!-- STEP TRACKER -->
+  <div class="tracker-wrap">
+    <ol class="tracker" id="tracker">
+      <li class="step active" data-step="1">
+        <span class="step-dot">1</span>
+        <span class="step-label">Checkout</span>
+      </li>
+      <li class="step" data-step="2">
+        <span class="step-dot">2</span>
+        <span class="step-label">Payment method</span>
+      </li>
+      <li class="step" data-step="3">
+        <span class="step-dot">3</span>
+        <span class="step-label">Card payment</span>
+      </li>
+      <li class="step" data-step="4">
+        <span class="step-dot">4</span>
+        <span class="step-label">Payment successful</span>
+      </li>
+      <li class="step" data-step="5">
+        <span class="step-dot">5</span>
+        <span class="step-label">Order confirmed</span>
+      </li>
+    </ol>
+  </div>
+
+  <main class="layout">
+
+    <!-- LEFT: STEP CONTENT -->
+    <div class="stage">
+
+      <!-- STEP 1: CHECKOUT (cart + shipping) -->
+      <section class="panel step-panel active" id="panel-1">
+        <h1 class="panel-title">Review your order</h1>
+        <p class="panel-sub">Confirm what's in your cart, then tell us where it's going.</p>
+
+        <div class="cart-list" id="cartList"></div>
+
+        <div class="promo-row">
+          <input type="text" id="promoInput" placeholder="Discount code">
+          <button class="btn ghost" id="applyPromo">Apply</button>
+        </div>
+        <p class="promo-msg" id="promoMsg"></p>
+
+        <h2 class="section-heading">Shipping details</h2>
+        <div class="form-grid">
+          <label>Full name<input type="text" id="shipName" placeholder="Farhana Islam"></label>
+          <label>Phone number<input type="tel" id="shipPhone" placeholder="01XXXXXXXXX"></label>
+          <label class="span-2">Address<input type="text" id="shipAddress" placeholder="House, road, area"></label>
+          <label>City<input type="text" id="shipCity" placeholder="Dhaka"></label>
+          <label>Postal code<input type="text" id="shipZip" placeholder="1212"></label>
+        </div>
+
+        <button class="btn primary full" id="toStep2">Continue to payment</button>
+      </section>
+
+      <!-- STEP 2: PAYMENT METHOD -->
+      <section class="panel step-panel" id="panel-2">
+        <h1 class="panel-title">Choose a payment method</h1>
+        <p class="panel-sub">Pick how you'd like to pay for this order.</p>
+
+        <div class="method-list" id="methodList">
+          <label class="method-card">
+            <input type="radio" name="method" value="card" checked>
+            <span class="method-icon">
+              <svg viewBox="0 0 20 20"><rect x="2.5" y="5" width="15" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 8.5h15" stroke="currentColor" stroke-width="1.4"/></svg>
+            </span>
+            <span class="method-text">
+              <span class="method-name">Debit / Credit card</span>
+              <span class="method-sub">Visa, Mastercard, Amex</span>
+            </span>
+            <span class="method-check"></span>
+          </label>
+
+          <label class="method-card">
+            <input type="radio" name="method" value="bkash">
+            <span class="method-icon pink">bK</span>
+            <span class="method-text">
+              <span class="method-name">bKash</span>
+              <span class="method-sub">Pay from your bKash wallet</span>
+            </span>
+            <span class="method-check"></span>
+          </label>
+
+          <label class="method-card">
+            <input type="radio" name="method" value="nagad">
+            <span class="method-icon orange">Na</span>
+            <span class="method-text">
+              <span class="method-name">Nagad</span>
+              <span class="method-sub">Pay from your Nagad wallet</span>
+            </span>
+            <span class="method-check"></span>
+          </label>
+
+          <label class="method-card">
+            <input type="radio" name="method" value="cod">
+            <span class="method-icon">
+              <svg viewBox="0 0 20 20"><path d="M4 3h9l3 3v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9h6M7 12.5h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </span>
+            <span class="method-text">
+              <span class="method-name">Cash on delivery</span>
+              <span class="method-sub">Pay when your order arrives</span>
+            </span>
+            <span class="method-check"></span>
+          </label>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn ghost" id="backTo1">Back</button>
+          <button class="btn primary" id="toStep3">Continue</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: CARD PAYMENT -->
+      <section class="panel step-panel" id="panel-3">
+        <h1 class="panel-title">Enter card details</h1>
+        <p class="panel-sub">Your card information is encrypted and never stored on our servers.</p>
+
+        <div class="card-preview">
+          <div class="card-visual" id="cardVisual">
+            <div class="card-visual-top">
+              <span class="chip"></span>
+              <span class="card-brand" id="cardBrand">CARD</span>
+            </div>
+            <div class="card-number" id="cardPreviewNumber">•••• •••• •••• ••••</div>
+            <div class="card-visual-bottom">
+              <div>
+                <span class="card-label">Card holder</span>
+                <span class="card-value" id="cardPreviewName">FULL NAME</span>
+              </div>
+              <div>
+                <span class="card-label">Expires</span>
+                <span class="card-value" id="cardPreviewExpiry">MM/YY</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="sandbox-note" id="sandboxNote">
+          Sandbox mode — use test card <code>4242 4242 4242 4242</code>, any future expiry, any CVC.
+        </p>
+
+        <div class="form-grid" id="cardForm">
+          <label class="span-2">Name on card
+            <input type="text" id="cardName" placeholder="Farhana Islam">
+            <span class="field-error" id="errCardName"></span>
+          </label>
+          <label class="span-2">Card details
+            <div id="card-element" class="stripe-element"></div>
+            <span class="field-error" id="card-errors"></span>
+          </label>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn ghost" id="backTo2">Back</button>
+          <button class="btn primary" id="payNowBtn">
+            <span id="payBtnLabel">Pay <span id="payAmount"></span></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 4: PAYMENT SUCCESSFUL -->
+      <section class="panel step-panel center-panel" id="panel-4">
+        <div class="result-icon success">
+          <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="2.5"/><path class="check-path" d="M15 27l7 7 15-15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h1 class="panel-title center">Payment successful</h1>
+        <p class="panel-sub center">Your payment of <strong id="successAmount"></strong> has been received.</p>
+
+        <div class="receipt">
+          <div class="receipt-row"><span>Transaction ID</span><span id="txnId">—</span></div>
+          <div class="receipt-row"><span>Payment method</span><span id="txnMethod">—</span></div>
+          <div class="receipt-row"><span>Date</span><span id="txnDate">—</span></div>
+        </div>
+
+        <button class="btn primary full" id="toStep5">View order confirmation</button>
+      </section>
+
+      <!-- STEP 5: ORDER CONFIRMED -->
+      <section class="panel step-panel center-panel" id="panel-5">
+        <div class="result-icon confirmed">
+          <svg viewBox="0 0 20 20"><path d="M4 3h9l3 3v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9h6M7 12.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h1 class="panel-title center">Order confirmed</h1>
+        <p class="panel-sub center">Order <strong id="orderNumber">—</strong> is being prepared. We've sent a confirmation to your phone.</p>
+
+        <div class="receipt">
+          <div class="receipt-row"><span>Delivery to</span><span id="confirmName">—</span></div>
+          <div class="receipt-row"><span>Address</span><span id="confirmAddress">—</span></div>
+          <div class="receipt-row"><span>Estimated delivery</span><span id="confirmEta">—</span></div>
+          <div class="receipt-row total"><span>Total paid</span><span id="confirmTotal">—</span></div>
+        </div>
+
+        <div class="step-actions center">
+          <button class="btn ghost" id="trackOrderBtn">Track order</button>
+          <button class="btn primary" id="newOrderBtn">Continue shopping</button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT: ORDER SUMMARY (persistent) -->
+    <aside class="summary" id="summary">
+      <h2 class="summary-title">Order summary</h2>
+      <div class="summary-list" id="summaryList"></div>
+      <div class="summary-line"><span>Subtotal</span><span id="sumSubtotal"></span></div>
+      <div class="summary-line"><span>Shipping</span><span id="sumShipping"></span></div>
+      <div class="summary-line discount-line" id="discountLine" hidden><span>Discount</span><span id="sumDiscount"></span></div>
+      <div class="summary-line total"><span>Total</span><span id="sumTotal"></span></div>
+    </aside>
+
+  </main>
+</div>
+
+<!-- PAYMENT PIPELINE OVERLAY: shows the real request path in real time -->
+<div class="pipeline-overlay" id="pipelineOverlay">
+  <div class="pipeline-card">
+    <h3 class="pipeline-title">Processing your payment</h3>
+    <p class="pipeline-sub">Here's what's happening behind the scenes.</p>
+
+    <ol class="pipeline-list" id="pipelineList">
+      <li class="pipe-step" data-pipe="1">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Customer</span>
+          <span class="pipe-detail">Submitting order from checkout</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="2">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Your e-commerce website</span>
+          <span class="pipe-detail">Sending payment request to your server</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="3">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Payment API</span>
+          <span class="pipe-detail" id="pipeDetail3">Calling Stripe.js — real sandbox request</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="4">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Payment provider</span>
+          <span class="pipe-detail" id="pipeDetail4">Stripe validates the card in test mode</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="5">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Customer authorizes payment</span>
+          <span class="pipe-detail">Cardholder confirms via 3D Secure, if required</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="6">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Payment success</span>
+          <span class="pipe-detail">Provider reports the charge as successful</span>
+        </div>
+      </li>
+      <li class="pipe-step" data-pipe="7">
+        <span class="pipe-icon"></span>
+        <div class="pipe-text">
+          <span class="pipe-label">Your website confirms order</span>
+          <span class="pipe-detail">Order marked paid, confirmation shown to customer</span>
+        </div>
+      </li>
+    </ol>
+
+    <p class="pipeline-footnote" id="pipelineFootnote"></p>
+  </div>
+</div>
+
+<script src="checkout.js"></script>
+</body>
+</html>
