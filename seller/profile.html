@@ -1,0 +1,243 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Edit Seller Info - ApexMart</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+        <link rel="stylesheet" href="../css/style.css">
+        <link rel="stylesheet" href="../css/dashboard.css">
+    </head>
+
+    <body>
+
+    <div id="sellerPage" data-page="seller-info">
+
+        <section class="dashboard-view-pane active">
+
+            <div class="dash-card">
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Seller & Store Information</h4>
+                        <p class="text-muted small mb-0">
+                            Update your store identity and contact info.
+                        </p>
+                    </div>
+                </div>
+
+                <form id="sellerInfoForm" onsubmit="handleSellerInfoSubmit(event)">
+
+                    <h5 class="form-section-title">
+                        <i class="bi bi-shop text-warning"></i>
+                        Merchant Information
+                    </h5>
+
+                    <div class="row g-3 mb-4">
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Store / Business Name *</label>
+                            <input type="text" name="store_name" class="form-control form-control-dash"
+                                id="infoStoreName" placeholder="e.g. Apex Tech Supply" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Primary Product Category *</label>
+                            <select name="category" class="form-select form-control-dash" id="infoCategory" required>
+                                <option value="">Select category...</option>
+                                <option value="electronics">Consumer Electronics</option>
+                                <option value="fashion">Apparel & Footwear</option>
+                                <option value="home">Home & Kitchen Gear</option>
+                                <option value="audio">Audio Equipment</option>
+                                <option value="other">Other / Multi-category</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Business Email *</label>
+                            <input type="email" name="email" class="form-control form-control-dash"
+                                id="infoEmail" placeholder="seller@business.com" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Phone Number *</label>
+                            <input type="tel" name="phone" class="form-control form-control-dash"
+                                id="infoPhone" placeholder="+01XXXXXXXXX" >
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Password *</label>
+                            <div class="input-group">
+                                <input type="password" name="password" class="form-control form-control-dash"
+                                    id="infoPassword" placeholder="Leave blank to keep current password">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleInfoPassword()">
+                                    <i class="bi bi-eye" id="infoPasswordIcon"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label form-label-dash">Estimated Monthly Inventory / Revenue</label>
+                            <select name="revenue_tier" class="form-select form-control-dash" id="infoRevenue">
+                                <option value="new">New Seller (Starting out)</option>
+                                <option value="tier1">$5,000 - $25,000 / month</option>
+                                <option value="tier2">$25,000 - $100,000 / month</option>
+                                <option value="tier3">$100,000+ / month</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="text-end pt-3 border-top">
+                        <a href="seller-dashboard.html" class="btn btn-outline-secondary me-2">Cancel</a>
+
+                        <button type="submit" class="btn btn-orange px-4">
+                            <i class="bi bi-check-lg me-1"></i>
+                            Save Store Profile
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <script>
+        function toggleInfoPassword() {
+            const pw = document.getElementById("infoPassword");
+            const icon = document.getElementById("infoPasswordIcon");
+            const show = pw.type === "password";
+            pw.type = show ? "text" : "password";
+            icon.classList.toggle("bi-eye", !show);
+            icon.classList.toggle("bi-eye-slash", show);
+        }
+
+        async function loadSellerProfile() {
+    const sellerId = localStorage.getItem("seller_id");
+
+    if (!sellerId) {
+        alert("Please login as a seller first.");
+        window.location.href = "../account/seller-login.html";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/sellers/${sellerId}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.detail || "Could not load seller information.");
+            return;
+        }
+
+        document.getElementById("infoStoreName").value = data.store_name;
+        document.getElementById("infoCategory").value = data.category;
+        document.getElementById("infoEmail").value = data.email;
+        document.getElementById("infoPhone").value = data.phone;
+        document.getElementById("infoRevenue").value = data.revenue_tier;
+
+        // Don't display the stored password/hash
+        document.getElementById("infoPassword").value = "";
+
+    } catch (error) {
+        console.error("Error loading seller profile:", error);
+
+        alert(
+            "Cannot connect to the server. Please make sure FastAPI is running."
+        );
+    }
+}
+
+
+async function handleSellerInfoSubmit(event) {
+    event.preventDefault();
+
+    const sellerId = localStorage.getItem("seller_id");
+
+    if (!sellerId) {
+        alert("Please login as a seller first.");
+        return;
+    }
+
+    const storeName = document.getElementById("infoStoreName").value.trim();
+    const category = document.getElementById("infoCategory").value;
+    const email = document.getElementById("infoEmail").value.trim();
+    const phone = document.getElementById("infoPhone").value.trim();
+    const password = document.getElementById("infoPassword").value;
+    const revenueTier = document.getElementById("infoRevenue").value;
+
+    const updatedData = {
+        store_name: storeName,
+        category: category,
+        email: email,
+        phone: phone,
+        revenue_tier: revenueTier
+    };
+
+    // Only send password if seller entered a new one
+    if (password.trim() !== "") {
+        updatedData.password = password;
+    }
+
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/sellers/${sellerId}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedData)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.detail || "Could not update seller information.");
+            return;
+        }
+
+        // Update stored email if email was changed
+        localStorage.setItem("seller_email", data.email);
+
+        // Clear password field after saving
+        document.getElementById("infoPassword").value = "";
+
+        alert("Seller information updated successfully.");
+
+    } catch (error) {
+        console.error("Error updating seller profile:", error);
+
+        alert(
+            "Cannot connect to the server. Please make sure FastAPI is running."
+        );
+    }
+    }
+        document.addEventListener("DOMContentLoaded", function () {
+    loadSellerProfile();
+    });
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Seller JavaScript -->
+    <script src="../js/seller-db.js"></script>
+    <script src="../js/seller-layout.js"></script>
+    <script src="../js/seller-dashboard.js"></script>
+
+    </body>
+    </html>

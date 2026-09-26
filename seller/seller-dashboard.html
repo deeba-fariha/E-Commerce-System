@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Dashboard - ApexMart</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+
+<div id="sellerPage" data-page="profile">
+    <section class="dashboard-view-pane active">
+
+        <!-- Seller Profile Header -->
+        <div class="dash-card mb-4">
+
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" alt="Store Logo" class="rounded-circle border" width="80" height="80" id="profileStoreLogo" >
+
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1" id="profileStoreName">
+                            Apex Tech & Lifestyle Studio
+                        </h3>
+
+                        <p class="text-secondary small mb-1" id="profileStoreTagline">
+                            Premium Audio, Wearables & Everyday Gadgets
+                        </p>
+
+                        <div class="small text-muted">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            <strong id="profileRating">
+                                4.88
+                            </strong>
+
+                            store rating
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Profile Actions -->
+                <div class="d-flex gap-2">
+
+                    <a
+                        class="btn btn-orange-outline btn-sm"
+                        href="profile.html"
+                    >
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Seller Info
+                    </a>
+
+                    <a
+                        class="btn btn-orange btn-sm"
+                        href="add-product.html"
+                    >
+                        <i class="bi bi-plus-lg"></i>
+                        Post New Product
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Dashboard Statistics -->
+        <div class="row g-3 mb-4">
+
+            <!-- Total Sales -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="dash-card">
+
+                    <p class="stat-metric-label">
+                        Total Store Sales
+                    </p>
+
+                    <h3
+                        class="stat-metric-val"
+                        id="statRevenue"
+                    >
+                        $0.00
+                    </h3>
+
+                    <span class="small text-success fw-bold">
+                        This month
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Customer Orders -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="dash-card">
+
+                    <p class="stat-metric-label">
+                        Customer Orders
+                    </p>
+
+                    <h3
+                        class="stat-metric-val"
+                        id="statTotalOrders"
+                    >
+                        0
+                    </h3>
+
+                    <span class="small text-muted">
+                        Across all channels
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Approved Products -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="dash-card">
+
+                    <p class="stat-metric-label">
+                        Live on Market
+                    </p>
+
+                    <h3
+                        class="stat-metric-val"
+                        id="statApproved"
+                    >
+                        0
+                    </h3>
+
+                    <span class="small text-success fw-bold">
+                        Approved by admin
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- Pending Products -->
+            <div class="col-12 col-sm-6 col-xl-3">
+
+                <div class="dash-card">
+
+                    <p class="stat-metric-label">
+                        Pending Approval
+                    </p>
+
+                    <h3
+                        class="stat-metric-val text-warning"
+                        id="statPending"
+                    >
+                        0
+                    </h3>
+
+                    <span class="small text-warning fw-semibold">
+                        Under review
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Store Information & Quick Actions -->
+        <div class="row g-4">
+
+            <!-- Store Information -->
+            <div class="col-lg-8">
+
+                <div class="dash-card">
+
+                    <h5 class="fw-bold text-dark mb-3">
+                        About Your Merchant Store
+                    </h5>
+
+                    <p
+                        class="text-secondary"
+                        id="profileBioText"
+                    >
+                        Your verified seller profile and store information.
+                    </p>
+
+                    <hr>
+
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+
+                            <span class="small text-muted d-block">
+                                Store Owner:
+                            </span>
+
+                            <strong id="profileOwnerName">
+                                Alex Johnson
+                            </strong>
+
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <span class="small text-muted d-block">
+                                Registered Email:
+                            </span>
+
+                            <strong id="profileEmail">
+                                alex.seller@apexmart.com
+                            </strong>
+
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <span class="small text-muted d-block">
+                                Business Hotline:
+                            </span>
+
+                            <strong id="profilePhone"></strong>
+
+                        </div>
+
+                        <div class="col-sm-6">
+
+                            <span class="small text-muted d-block">
+                                Warehouse Location:
+                            </span>
+
+                            <strong id="profileAddress"></strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="col-lg-4">
+
+                <div class="dash-card">
+
+                    <h5 class="fw-bold text-dark mb-3">
+                        Quick Actions
+                    </h5>
+
+                    <div class="d-grid gap-2">
+
+                        <a
+                            class="btn btn-orange text-start py-2"
+                            href="add-product.html"
+                        >
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Post New Product
+                        </a>
+
+                        <a
+                            class="btn btn-charcoal text-start py-2"
+                            href="product-status.html"
+                        >
+                            <i class="bi bi-check2-circle me-2"></i>
+                            View Approval Status
+                        </a>
+
+                        <a
+                            class="btn btn-outline-dark text-start py-2"
+                            href="orders.html"
+                        >
+                            <i class="bi bi-chat-left-text me-2"></i>
+                            Read Customer Reviews
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+<!-- Seller JavaScript -->
+<script src="../js/seller-db.js"></script>
+<script src="../js/seller-layout.js"></script>
+<script src="../js/seller-dashboard.js"></script>
+
+
+</body>
+
+</html>
