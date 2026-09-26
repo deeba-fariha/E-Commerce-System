@@ -1,0 +1,2396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Orders - ApexMart</title>
+
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+  <!-- Bootstrap Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+
+  <!-- Existing ApexMart CSS -->
+  <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+
+    body {
+      background: #f7f7f8;
+    }
+
+    .dashboard-wrapper {
+      padding: 40px 0 60px;
+    }
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .dashboard-sidebar {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      height: 100%;
+    }
+
+    .dashboard-sidebar h5 {
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-sidebar .nav-link {
+      color: #333;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .dashboard-sidebar .nav-link:hover,
+    .dashboard-sidebar .nav-link.active {
+      background: #ff6b00;
+      color: white;
+    }
+
+    /* =========================
+       MAIN CONTENT
+    ========================== */
+
+    .dashboard-content-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      margin-bottom: 24px;
+    }
+
+    .orders-header {
+      margin-bottom: 28px;
+    }
+
+    .orders-header h1 {
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+    .orders-header p {
+      color: #6b7280;
+      margin-bottom: 0;
+    }
+
+    /* =========================
+       SUMMARY CARDS
+    ========================== */
+
+    .order-summary-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+      height: 100%;
+      transition: 0.2s;
+    }
+
+    .order-summary-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    }
+
+    .summary-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #fff3e8;
+      color: #ff6b00;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .order-summary-card h3 {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .order-summary-card p {
+      margin: 0;
+      color: #777;
+    }
+
+    /* =========================
+       FILTER
+    ========================== */
+
+    .filter-box {
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: 14px;
+      padding: 20px;
+      margin: 30px 0;
+    }
+
+    .filter-box .form-control,
+    .filter-box .form-select {
+      border-radius: 10px;
+      padding: 11px 14px;
+    }
+
+    .filter-box .form-control:focus,
+    .filter-box .form-select:focus {
+      border-color: #ff6b00;
+      box-shadow: 0 0 0 0.2rem rgba(255, 107, 0, 0.15);
+    }
+
+    /* =========================
+       ORDER CARD
+    ========================== */
+
+    .order-card {
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      transition: 0.2s;
+    }
+
+    .order-card:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-image {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    /* =========================
+       STATUS
+    ========================== */
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-delivered {
+      background: #e8f7ee;
+      color: #198754;
+    }
+
+    .status-processing {
+      background: #fff4dd;
+      color: #b77900;
+    }
+
+    .status-pending {
+      background: #fff4dd;
+      color: #b77900;
+    }
+
+    .status-shipping {
+      background: #e9f3ff;
+      color: #1769aa;
+    }
+
+    .status-cancelled {
+      background: #fdecec;
+      color: #dc3545;
+    }
+
+    /* =========================
+       ORANGE BUTTON
+    ========================== */
+
+    .btn-orange {
+      background: #ff6b00;
+      border-color: #ff6b00;
+      color: #fff;
+    }
+
+    .btn-orange:hover {
+      background: #e85f00;
+      border-color: #e85f00;
+      color: #fff;
+    }
+
+    /* =========================
+       REVIEW
+    ========================== */
+
+    .rating-stars {
+      display: flex;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .rating-stars i {
+      font-size: 30px;
+      color: #d6d6d6;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .rating-stars i:hover {
+      color: #ff6b00;
+      transform: scale(1.1);
+    }
+
+    .rating-stars i.selected {
+      color: #ff6b00;
+    }
+
+    .review-display {
+      background: #fffaf4;
+      border: 1px solid #ffe0c2;
+      border-radius: 12px;
+      padding: 12px 15px;
+      margin-top: 15px;
+    }
+
+    .review-display .review-stars {
+      color: #ff6b00;
+      letter-spacing: 2px;
+    }
+
+    .review-display .review-text {
+      margin-top: 6px;
+      margin-bottom: 4px;
+      color: #444;
+    }
+
+    .review-display .review-date {
+      font-size: 12px;
+      color: #888;
+    }
+
+    /* =========================
+       EMPTY STATE
+    ========================== */
+
+    .empty-orders {
+      text-align: center;
+      padding: 50px 20px;
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: 16px;
+      color: #777;
+    }
+
+    .empty-orders i {
+      font-size: 50px;
+      color: #ff6b00;
+      margin-bottom: 15px;
+    }
+
+    /* =========================
+       CART
+    ========================== */
+
+    .cart-offcanvas {
+      width: 430px !important;
+      max-width: 100%;
+    }
+
+    .cart-footer-box {
+      border-top: 1px solid #eee;
+      padding: 18px;
+      background: #fff;
+    }
+
+    .cart-summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+
+    .cart-total-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 22px;
+      font-weight: 700;
+      border-top: 1px dashed #ddd;
+      padding-top: 15px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 767px) {
+
+      .order-card {
+        text-align: left;
+      }
+
+      .order-image {
+        margin-bottom: 15px;
+      }
+
+      .cart-offcanvas {
+        width: 100% !important;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm">
+
+    <div class="container">
+
+      <a
+        class="navbar-brand fw-bold fs-4"
+        href="../main/index.html"
+      >
+        Apex<span style="color:#ff6b00;">Mart</span>
+      </a>
+
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#ordersNavbar"
+        aria-controls="ordersNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+
+        <span class="navbar-toggler-icon"></span>
+
+      </button>
+
+
+      <div
+        class="collapse navbar-collapse"
+        id="ordersNavbar"
+      >
+
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="../main/index.html"
+            >
+              Home
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="dashboard.html"
+            >
+              Dashboard
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link active"
+              href="orders.html"
+            >
+              Orders
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="wishlist.html"
+            >
+              Wishlist
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="btn btn-outline-dark"
+              href="profile.html"
+            >
+
+              <i class="bi bi-person"></i>
+              Profile
+
+            </a>
+
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+
+
+  <!-- =========================
+       ORDERS PAGE
+  ========================== -->
+
+  <main class="dashboard-wrapper">
+
+    <div class="container">
+
+      <div class="row g-4">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <div class="col-lg-3">
+
+          <div class="dashboard-sidebar">
+
+            <h5>
+              My Account
+            </h5>
+
+
+            <nav class="nav flex-column">
+
+              <a
+                class="nav-link"
+                href="dashboard.html"
+              >
+
+                <i class="bi bi-grid me-2"></i>
+                Dashboard
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="profile.html"
+              >
+
+                <i class="bi bi-person me-2"></i>
+                My Profile
+
+              </a>
+
+
+              <a
+                class="nav-link active"
+                href="orders.html"
+              >
+
+                <i class="bi bi-box-seam me-2"></i>
+                My Orders
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="wishlist.html"
+              >
+
+                <i class="bi bi-heart me-2"></i>
+                Wishlist
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="checkout.html"
+              >
+
+                <i class="bi bi-credit-card me-2"></i>
+                Checkout
+
+              </a>
+
+
+              <a
+                class="nav-link text-danger"
+                href="../account/login.html"
+              >
+
+                <i class="bi bi-box-arrow-right me-2"></i>
+                Logout
+
+              </a>
+
+            </nav>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <div class="col-lg-9">
+
+          <div class="dashboard-content-card">
+
+
+            <div class="orders-header">
+
+              <h1>
+                My Orders
+              </h1>
+
+              <p>
+                Track your purchases and manage your orders
+              </p>
+
+            </div>
+
+
+
+            <!-- =========================
+                 SUMMARY
+            ========================== -->
+
+            <div class="row g-3">
+
+
+              <div class="col-md-6 col-xl-3">
+
+                <div class="order-summary-card">
+
+                  <div class="summary-icon">
+                    <i class="bi bi-bag-check"></i>
+                  </div>
+
+                  <h3 id="totalOrdersCount">
+                    0
+                  </h3>
+
+                  <p>
+                    Total Orders
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6 col-xl-3">
+
+                <div class="order-summary-card">
+
+                  <div class="summary-icon">
+                    <i class="bi bi-clock-history"></i>
+                  </div>
+
+                  <h3 id="pendingOrdersCount">
+                    0
+                  </h3>
+
+                  <p>
+                    Pending
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6 col-xl-3">
+
+                <div class="order-summary-card">
+
+                  <div class="summary-icon">
+                    <i class="bi bi-truck"></i>
+                  </div>
+
+                  <h3 id="shippingOrdersCount">
+                    0
+                  </h3>
+
+                  <p>
+                    Shipping
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6 col-xl-3">
+
+                <div class="order-summary-card">
+
+                  <div class="summary-icon">
+                    <i class="bi bi-check-circle"></i>
+                  </div>
+
+                  <h3 id="deliveredOrdersCount">
+                    0
+                  </h3>
+
+                  <p>
+                    Delivered
+                  </p>
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 FILTER
+            ========================== -->
+
+            <div class="filter-box">
+
+              <div class="row g-3">
+
+                <div class="col-md-6">
+
+                  <input
+                    type="text"
+                    id="searchOrderInput"
+                    class="form-control"
+                    placeholder="Search Order ID"
+                  >
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                  <select
+                    id="statusFilter"
+                    class="form-select"
+                  >
+
+                    <option value="All">
+                      All Orders
+                    </option>
+
+                    <option value="Pending">
+                      Pending
+                    </option>
+
+                    <option value="Processing">
+                      Processing
+                    </option>
+
+                    <option value="Shipping">
+                      Shipping
+                    </option>
+
+                    <option value="Delivered">
+                      Delivered
+                    </option>
+
+                    <option value="Cancelled">
+                      Cancelled
+                    </option>
+
+                  </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                  <select
+                    id="sortFilter"
+                    class="form-select"
+                  >
+
+                    <option value="newest">
+                      Newest First
+                    </option>
+
+                    <option value="oldest">
+                      Oldest First
+                    </option>
+
+                  </select>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 RECENT ORDERS
+            ========================== -->
+
+            <h4 class="fw-bold mb-3">
+              Recent Orders
+            </h4>
+
+
+            <div id="ordersContainer"></div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+  <!-- =========================
+       SHOPPING CART OFFCANVAS
+  ========================== -->
+
+  <div
+    class="offcanvas offcanvas-end cart-offcanvas"
+    tabindex="-1"
+    id="cartOffcanvas"
+    aria-labelledby="cartOffcanvasLabel"
+  >
+
+    <div class="offcanvas-header">
+
+      <h5
+        class="offcanvas-title"
+        id="cartOffcanvasLabel"
+      >
+
+        <i class="bi bi-cart3 text-warning"></i>
+
+        Shopping Cart
+        (<span id="cartDrawerCount">0</span>)
+
+      </h5>
+
+
+      <button
+        type="button"
+        class="btn-close text-reset shadow-none"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body d-flex flex-column p-0">
+
+
+      <div
+        class="p-3 flex-grow-1 overflow-auto"
+        id="cartItemsContainer"
+      >
+
+        <!-- Existing app.js renders cart items here -->
+
+      </div>
+
+
+      <div
+        class="cart-footer-box"
+        id="cartFooterSection"
+      >
+
+
+        <div class="cart-summary-line">
+
+          <span>
+            Subtotal
+          </span>
+
+          <span
+            class="fw-bold"
+            id="cartSubtotalText"
+          >
+            $0.00
+          </span>
+
+        </div>
+
+
+        <div class="cart-summary-line">
+
+          <span>
+            Estimated Shipping
+          </span>
+
+          <span
+            class="text-success fw-bold"
+            id="cartShippingText"
+          >
+            FREE
+          </span>
+
+        </div>
+
+
+        <div class="cart-total-line">
+
+          <span>
+            Grand Total
+          </span>
+
+          <span
+            class="text-warning"
+            id="cartTotalText"
+          >
+            $0.00
+          </span>
+
+        </div>
+
+
+        <button
+          class="btn btn-orange w-100 mt-3 py-2"
+          onclick="handleCheckout()"
+        >
+
+          <i class="bi bi-shield-check"></i>
+
+          Proceed to Checkout
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       REVIEW MODAL
+  ========================== -->
+
+  <div
+    class="modal fade"
+    id="reviewModal"
+    tabindex="-1"
+    aria-labelledby="reviewModalLabel"
+    aria-hidden="true"
+  >
+
+    <div class="modal-dialog modal-dialog-centered">
+
+      <div class="modal-content border-0 shadow">
+
+
+        <div class="modal-header">
+
+          <h5
+            class="modal-title fw-bold"
+            id="reviewModalLabel"
+          >
+            Write a Review
+          </h5>
+
+
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+          <div class="text-center mb-4">
+
+            <img
+              id="reviewProductImage"
+              src=""
+              alt="Product"
+              style="
+                width:80px;
+                height:80px;
+                object-fit:cover;
+                border-radius:12px;
+              "
+            >
+
+
+            <h5
+              class="fw-bold mt-3 mb-1"
+              id="reviewProductName"
+            >
+              Product
+            </h5>
+
+
+            <p
+              class="text-muted mb-0"
+              id="reviewOrderId"
+            >
+              Order
+            </p>
+
+          </div>
+
+
+
+          <div class="mb-4">
+
+            <label class="form-label fw-bold">
+              Your Rating
+            </label>
+
+
+            <div
+              class="rating-stars"
+              id="ratingStars"
+            >
+
+              <i
+                class="bi bi-star"
+                data-rating="1"
+                onclick="selectRating(1)"
+              ></i>
+
+              <i
+                class="bi bi-star"
+                data-rating="2"
+                onclick="selectRating(2)"
+              ></i>
+
+              <i
+                class="bi bi-star"
+                data-rating="3"
+                onclick="selectRating(3)"
+              ></i>
+
+              <i
+                class="bi bi-star"
+                data-rating="4"
+                onclick="selectRating(4)"
+              ></i>
+
+              <i
+                class="bi bi-star"
+                data-rating="5"
+                onclick="selectRating(5)"
+              ></i>
+
+            </div>
+
+
+            <small
+              class="text-muted"
+              id="ratingText"
+            >
+              Select a rating
+            </small>
+
+          </div>
+
+
+
+          <div class="mb-3">
+
+            <label class="form-label fw-bold">
+              Your Review
+            </label>
+
+
+            <textarea
+              id="reviewText"
+              class="form-control"
+              rows="5"
+              placeholder="Share your experience with this product..."
+            ></textarea>
+
+          </div>
+
+
+          <div
+            id="reviewSuccess"
+            class="alert alert-success d-none"
+          >
+            Your review has been submitted successfully.
+          </div>
+
+
+        </div>
+
+
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+
+
+          <button
+            type="button"
+            class="btn btn-orange"
+            onclick="submitReview()"
+          >
+
+            <i class="bi bi-send me-2"></i>
+
+            Submit Review
+
+          </button>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================
+       EXISTING PRODUCT DATA
+       AND CART SYSTEM
+  ========================== -->
+
+  <script src="../js/products.js"></script>
+
+  <script src="../js/app.js"></script>
+
+
+  <!-- Bootstrap JS -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+
+
+  <!-- =========================
+       ORDERS PAGE JAVASCRIPT
+  ========================== -->
+
+  <script>
+
+    /* =====================================================
+       ORDER DATA
+       ===================================================== */
+
+    let ordersData = [];
+
+    const API_BASE = "http://127.0.0.1:8000";
+
+
+    /* =====================================================
+       PRODUCT DATA HELPERS
+       ===================================================== */
+
+    function getProductById(productId) {
+
+      const id = Number(productId);
+
+      if (typeof productsData === "undefined") {
+        return null;
+      }
+
+      return productsData.find(function (product) {
+        return Number(product.id) === id;
+      }) || null;
+    }
+
+
+    function getProductName(productId) {
+
+      const product = getProductById(productId);
+
+      return product
+        ? product.name
+        : "Product";
+    }
+
+
+    function getProductImage(productId) {
+
+      const product = getProductById(productId);
+
+      return product
+        ? product.image
+        : "";
+    }
+
+
+    /* =====================================================
+       REVIEW STATE
+       ===================================================== */
+    
+    async function loadOrders() {
+
+  const currentUser = JSON.parse(
+    localStorage.getItem("apexmart_user")
+  );
+
+  if (!currentUser) {
+    alert("Please login first");
+    window.location.href = "../account/login.html";
+    return;
+  }
+
+  try {
+
+    const response = await fetch(
+      `${API_BASE}/customer/orders/${currentUser.id}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to load orders");
+    }
+
+    const data = await response.json();
+
+    ordersData = data.flatMap(function(order) {
+
+      return order.items.map(function(item) {
+
+        return {
+          productId: item.product_id,
+
+          productName: getProductName(item.product_id),
+
+          orderId: order.order_number,
+
+          date: "Order Date",
+          dbOrderId: order.id,
+
+          dateValue: String(order.id),
+
+          total: order.total,
+
+          status: order.status,
+
+          image: getProductImage(item.product_id)
+        };
+
+      });
+
+    });
+
+    renderOrders();
+    updateSummary();
+
+  } catch (error) {
+
+    console.error("Order loading error:", error);
+
+    document.getElementById("ordersContainer").innerHTML = `
+      <div class="empty-orders">
+        <i class="bi bi-exclamation-circle"></i>
+        <h5 class="fw-bold">Unable to Load Orders</h5>
+        <p class="mb-0">
+          Please make sure the backend server is running.
+        </p>
+      </div>
+    `;
+
+  }
+
+}
+
+
+
+    let selectedRating = 0;
+
+    let selectedReviewProductId = null;
+
+    let selectedReviewOrderId = null;
+
+
+    /* =====================================================
+       INITIALIZE PAGE
+       ===================================================== */
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+      setupFilters();
+
+      loadOrders();
+
+    });
+
+
+    /* =====================================================
+       RENDER ORDERS
+       ===================================================== */
+
+    function renderOrders() {
+
+      const container =
+        document.getElementById("ordersContainer");
+
+      const searchInput =
+        document.getElementById("searchOrderInput");
+
+      const statusFilter =
+        document.getElementById("statusFilter");
+
+      const sortFilter =
+        document.getElementById("sortFilter");
+
+
+      const searchValue =
+        searchInput
+          ? searchInput.value.trim().toLowerCase()
+          : "";
+
+
+      const selectedStatus =
+        statusFilter
+          ? statusFilter.value
+          : "All";
+
+
+      const selectedSort =
+        sortFilter
+          ? sortFilter.value
+          : "newest";
+
+
+      let filteredOrders =
+        ordersData.filter(function (order) {
+
+          const matchesSearch =
+            order.orderId
+              .toLowerCase()
+              .includes(searchValue);
+
+
+          const matchesStatus =
+            selectedStatus === "All" ||
+            order.status === selectedStatus;
+
+
+          return matchesSearch && matchesStatus;
+
+        });
+
+
+      filteredOrders.sort(function (a, b) {
+
+        const dateA =
+          new Date(a.dateValue);
+
+        const dateB =
+          new Date(b.dateValue);
+
+
+        if (selectedSort === "oldest") {
+
+          return dateA - dateB;
+
+        }
+
+
+        return dateB - dateA;
+
+      });
+
+
+      container.innerHTML = "";
+
+
+      if (filteredOrders.length === 0) {
+
+        container.innerHTML = `
+
+          <div class="empty-orders">
+
+            <i class="bi bi-box-seam"></i>
+
+            <h5 class="fw-bold">
+              No Orders Found
+            </h5>
+
+            <p class="mb-0">
+              No order matches your current search or filter.
+            </p>
+
+          </div>
+
+        `;
+
+        return;
+
+      }
+
+
+      filteredOrders.forEach(function (order) {
+
+        container.insertAdjacentHTML(
+          "beforeend",
+          createOrderCard(order)
+        );
+
+      });
+
+
+      renderSavedReviews();
+
+    }
+
+
+
+    /* =====================================================
+       CREATE ORDER CARD
+       ===================================================== */
+
+    function createOrderCard(order) {
+
+      let statusClass =
+        "status-processing";
+
+
+      if (order.status === "Delivered") {
+
+        statusClass =
+          "status-delivered";
+
+      }
+
+      else if (order.status === "Shipping") {
+
+        statusClass =
+          "status-shipping";
+
+      }
+
+      else if (order.status === "Pending") {
+
+        statusClass =
+          "status-pending";
+
+      }
+
+      else if (order.status === "Cancelled") {
+
+        statusClass =
+          "status-cancelled";
+
+      }
+
+
+      return `
+
+        <div
+          class="order-card"
+          data-order-id="${order.orderId}"
+          data-product-id="${order.productId}"
+        >
+
+          <div class="row align-items-center g-3">
+
+
+            <div class="col-md-2">
+
+              <img
+                src="${order.image}"
+                class="order-image"
+                alt="${order.productName}"
+              >
+
+            </div>
+
+
+            <div class="col-md-6">
+
+              <h5 class="fw-bold">
+                ${order.productName}
+              </h5>
+
+              <p class="mb-1 text-muted">
+                Order ID: ${order.orderId}
+              </p>
+
+              <p class="mb-1 text-muted">
+                Date: ${order.date}
+              </p>
+
+              <p class="mb-0 fw-bold">
+                Total: $${Number(order.total).toFixed(2)}
+              </p>
+
+
+              <!-- Review will appear here -->
+
+              <div
+                id="review-display-${order.productId}"
+              ></div>
+
+            </div>
+
+
+            <div class="col-md-4 text-md-end">
+
+              <span
+                class="status-badge ${statusClass}"
+              >
+                ${order.status}
+              </span>
+
+
+              <div class="mt-3">
+
+
+                <!-- VIEW DETAILS -->
+
+                <button
+                  type="button"
+                  class="btn btn-outline-dark btn-sm"
+                  onclick="viewProduct(${order.productId})"
+                >
+                  View Details
+                </button>
+
+
+                <!-- BUY AGAIN -->
+
+                <button
+                  type="button"
+                  class="btn btn-orange btn-sm ms-2"
+                  onclick="buyAgain(${order.productId})"
+                >
+                  Buy Again
+                </button>
+
+
+                <!-- WRITE REVIEW -->
+
+                <button
+                  type="button"
+                  class="btn btn-outline-warning btn-sm ms-2 mt-2"
+                  onclick="openReviewModal(
+                    ${order.productId},
+                    '${escapeForAttribute(order.productName)}',
+                    '${order.dbOrderId}',
+                    '${escapeForAttribute(order.image)}'
+                  )"
+                >
+
+                  <i class="bi bi-star me-1"></i>
+
+                  Write a Review
+
+                </button>
+
+
+              </div>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+
+
+
+    /* =====================================================
+       ESCAPE TEXT FOR INLINE ATTRIBUTE
+       ===================================================== */
+
+    function escapeForAttribute(value) {
+
+      return String(value)
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'");
+
+    }
+
+
+
+    /* =====================================================
+       VIEW PRODUCT
+       ===================================================== */
+
+    function viewProduct(productId) {
+
+      const id =
+        Number(productId);
+
+
+      if (
+        !Number.isInteger(id) ||
+        id < 1
+      ) {
+
+        alert("Invalid product ID.");
+
+        return;
+
+      }
+
+
+      /*
+        Product IDs are already present in products.js.
+
+        Example:
+        Sony       = 1
+        Apple Watch = 2
+
+        Therefore the same ID is sent to product.html.
+      */
+
+      window.location.href =
+        "../main/product.html?id=" + id;
+
+    }
+
+
+
+    /* =====================================================
+       BUY AGAIN
+       ===================================================== */
+
+    function buyAgain(productId) {
+
+      const id =
+        Number(productId);
+
+
+      if (
+        !Number.isInteger(id) ||
+        id < 1
+      ) {
+
+        alert("Invalid product ID.");
+
+        return;
+
+      }
+
+
+      /*
+        IMPORTANT:
+
+        We are NOT creating a second cart system.
+
+        We use the existing ApexMart cart function
+        from app.js.
+
+        This means Buy Again behaves like adding
+        the same product to the existing cart.
+      */
+
+      if (typeof addToCart === "function") {
+
+        addToCart(id, 1);
+
+        return;
+
+      }
+
+
+      alert(
+        "Cart system could not be loaded. Please refresh the page and try again."
+      );
+
+    }
+
+
+
+    /* =====================================================
+       REVIEW MODAL
+       ===================================================== */
+
+    function openReviewModal(
+      productId,
+      productName,
+      orderId,
+      image
+    ) {
+
+      selectedReviewProductId =
+        Number(productId);
+
+      selectedReviewOrderId =
+        orderId;
+
+
+      selectedRating = 0;
+
+
+      /*
+        Set product information dynamically.
+      */
+
+      document.getElementById(
+        "reviewProductImage"
+      ).src = image;
+
+
+      document.getElementById(
+        "reviewProductImage"
+      ).alt = productName;
+
+
+      document.getElementById(
+        "reviewProductName"
+      ).textContent =
+        productName;
+
+
+      document.getElementById(
+        "reviewOrderId"
+      ).textContent =
+        "Order " + orderId;
+
+
+      /*
+        Reset review fields.
+      */
+
+      document.getElementById(
+        "reviewText"
+      ).value = "";
+
+
+      document.getElementById(
+        "ratingText"
+      ).textContent =
+        "Select a rating";
+
+
+      document.getElementById(
+        "reviewSuccess"
+      ).classList.add("d-none");
+
+
+      resetRatingStars();
+
+
+      /*
+        Open Bootstrap modal.
+      */
+
+      const modalElement =
+        document.getElementById("reviewModal");
+
+
+      const modal =
+        bootstrap.Modal.getOrCreateInstance(
+          modalElement
+        );
+
+
+      modal.show();
+
+    }
+
+
+
+    /* =====================================================
+       RATING
+       ===================================================== */
+
+    function selectRating(rating) {
+
+      selectedRating =
+        Number(rating);
+
+
+      const stars =
+        document.querySelectorAll(
+          "#ratingStars i"
+        );
+
+
+      stars.forEach(function (star) {
+
+        const starRating =
+          parseInt(
+            star.getAttribute("data-rating")
+          );
+
+
+        if (starRating <= selectedRating) {
+
+          star.classList.remove(
+            "bi-star"
+          );
+
+          star.classList.add(
+            "bi-star-fill"
+          );
+
+          star.classList.add(
+            "selected"
+          );
+
+        }
+
+        else {
+
+          star.classList.remove(
+            "bi-star-fill"
+          );
+
+          star.classList.remove(
+            "selected"
+          );
+
+          star.classList.add(
+            "bi-star"
+          );
+
+        }
+
+      });
+
+
+      const ratingText =
+        document.getElementById(
+          "ratingText"
+        );
+
+
+      const ratingMessages = {
+
+        1: "Poor",
+        2: "Fair",
+        3: "Good",
+        4: "Very Good",
+        5: "Excellent"
+
+      };
+
+
+      ratingText.textContent =
+        selectedRating +
+        " Star - " +
+        ratingMessages[selectedRating];
+
+    }
+
+
+
+    /* =====================================================
+       RESET RATING
+       ===================================================== */
+
+    function resetRatingStars() {
+
+      document
+        .querySelectorAll(
+          "#ratingStars i"
+        )
+        .forEach(function (star) {
+
+          star.classList.remove(
+            "bi-star-fill"
+          );
+
+          star.classList.remove(
+            "selected"
+          );
+
+          star.classList.add(
+            "bi-star"
+          );
+
+        });
+
+    }
+
+
+
+    /* =====================================================
+       SUBMIT REVIEW
+       ===================================================== */
+
+   /* =====================================================
+   SUBMIT REVIEW
+   ===================================================== */
+
+async function submitReview() {
+
+  const reviewText =
+    document
+      .getElementById("reviewText")
+      .value
+      .trim();
+
+
+  const successMessage =
+    document.getElementById(
+      "reviewSuccess"
+    );
+
+
+  if (!selectedReviewProductId) {
+
+    alert(
+      "Please select a product."
+    );
+
+    return;
+
+  }
+
+
+  if (selectedRating === 0) {
+
+    alert(
+      "Please select a rating."
+    );
+
+    return;
+
+  }
+
+
+  if (reviewText === "") {
+
+    alert(
+      "Please write your review."
+    );
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     GET LOGGED-IN USER
+     ===================================================== */
+
+  const loggedInUser =
+    JSON.parse(
+      localStorage.getItem(
+        "apexmart_user"
+      )
+    );
+
+
+  if (!loggedInUser || !loggedInUser.id) {
+
+    alert(
+      "Please login first."
+    );
+
+    return;
+
+  }
+
+
+  /* =====================================================
+     SAVE REVIEW TO DATABASE
+     ===================================================== */
+
+  try {
+
+    const response =
+      await fetch(
+        "http://127.0.0.1:8000/customer/reviews",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            user_id:
+              Number(loggedInUser.id),
+
+            product_id:
+              Number(selectedReviewProductId),
+
+            order_id:
+              Number(selectedReviewOrderId),
+
+            rating:
+              Number(selectedRating),
+
+            review:
+              reviewText
+
+          })
+
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      console.error(
+        "Review save error:",
+        data
+      );
+
+      alert(
+        data.detail ||
+        "Failed to save review."
+      );
+
+      return;
+
+    }
+
+
+    /* =====================================================
+       SUCCESS
+       ===================================================== */
+
+    successMessage.classList.remove(
+      "d-none"
+    );
+
+
+    /*
+      Keep the existing UI behavior.
+      Clear the review text after successful submission.
+    */
+
+    document.getElementById(
+      "reviewText"
+    ).value = "";
+
+
+    /*
+      Refresh the reviews displayed
+      for this product.
+    */
+
+    await renderSavedReviews(
+      selectedReviewProductId
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Review submission error:",
+      error
+    );
+
+    alert(
+      "Could not connect to the server. Please try again."
+    );
+
+  }
+
+}
+
+
+
+    /* =====================================================
+       DISPLAY SAVED REVIEWS
+       ===================================================== */
+/* =====================================================
+   DISPLAY SAVED REVIEWS FROM DATABASE
+   ===================================================== */
+
+async function renderSavedReviews() {
+
+  /*
+     Clear previous review displays.
+  */
+
+  document
+    .querySelectorAll("[id^='review-display-']")
+    .forEach(function (element) {
+
+      element.innerHTML = "";
+
+    });
+
+
+  /*
+     Load reviews from database
+     for each product.
+  */
+
+  for (const order of ordersData) {
+
+    try {
+
+      const response = await fetch(
+        `${API_BASE}/customer/reviews/product/${order.productId}`
+      );
+
+
+      if (!response.ok) {
+
+        console.error(
+          "Failed to load reviews for product:",
+          order.productId
+        );
+
+        continue;
+
+      }
+
+
+      const reviews = await response.json();
+
+
+      /*
+         No review for this product.
+      */
+
+      if (!reviews || reviews.length === 0) {
+
+        continue;
+
+      }
+
+
+      /*
+         Show the latest review.
+         Backend already returns newest first.
+      */
+
+      const latestReview =
+        reviews[0];
+
+
+      const container =
+        document.getElementById(
+          "review-display-" +
+          order.productId
+        );
+
+
+      if (!container) {
+
+        continue;
+
+      }
+
+
+      /*
+         Create stars.
+      */
+
+      let stars = "";
+
+
+      for (
+        let i = 1;
+        i <= 5;
+        i++
+      ) {
+
+        if (
+          i <=
+          Number(latestReview.rating)
+        ) {
+
+          stars += "★";
+
+        } else {
+
+          stars += "☆";
+
+        }
+
+      }
+
+
+      /*
+         Display review.
+      */
+
+      container.innerHTML = `
+
+        <div class="review-display">
+
+          <div class="review-stars">
+            ${stars}
+          </div>
+
+          <div class="review-text">
+            "${escapeHTML(latestReview.review)}"
+          </div>
+
+          <div class="review-date">
+            Review saved in database
+          </div>
+
+        </div>
+
+      `;
+
+
+    } catch (error) {
+
+      console.error(
+        "Review loading error:",
+        error
+      );
+
+    }
+
+  }
+
+}
+
+
+
+    /* =====================================================
+       ESCAPE HTML
+       ===================================================== */
+
+    function escapeHTML(value) {
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+
+    /* =====================================================
+       SUMMARY COUNTS
+       ===================================================== */
+
+    function updateSummary() {
+
+      const total =
+        ordersData.length;
+
+
+      const pending =
+        ordersData.filter(function (order) {
+
+          return (
+            order.status === "Pending" ||
+            order.status === "Processing"
+          );
+
+        }).length;
+
+
+      const shipping =
+        ordersData.filter(function (order) {
+
+          return order.status === "Shipping";
+
+        }).length;
+
+
+      const delivered =
+        ordersData.filter(function (order) {
+
+          return order.status === "Delivered";
+
+        }).length;
+
+
+      document.getElementById(
+        "totalOrdersCount"
+      ).textContent = total;
+
+
+      document.getElementById(
+        "pendingOrdersCount"
+      ).textContent = pending;
+
+
+      document.getElementById(
+        "shippingOrdersCount"
+      ).textContent = shipping;
+
+
+      document.getElementById(
+        "deliveredOrdersCount"
+      ).textContent = delivered;
+
+    }
+
+
+
+    /* =====================================================
+       FILTER EVENTS
+    ===================================================== */
+
+    function setupFilters() {
+
+      const searchInput =
+        document.getElementById(
+          "searchOrderInput"
+        );
+
+
+      const statusFilter =
+        document.getElementById(
+          "statusFilter"
+        );
+
+
+      const sortFilter =
+        document.getElementById(
+          "sortFilter"
+        );
+
+
+      if (searchInput) {
+
+        searchInput.addEventListener(
+          "input",
+          function () {
+
+            renderOrders();
+
+          }
+        );
+
+      }
+
+
+      if (statusFilter) {
+
+        statusFilter.addEventListener(
+          "change",
+          function () {
+
+            renderOrders();
+
+          }
+        );
+
+      }
+
+
+      if (sortFilter) {
+
+        sortFilter.addEventListener(
+          "change",
+          function () {
+
+            renderOrders();
+
+          }
+        );
+
+      }
+
+    }
+
+
+
+    /* =====================================================
+       CHECKOUT
+       ===================================================== */
+
+    function handleCheckout() {
+
+      /*
+        Use existing checkout function
+        if app.js provides one.
+      */
+
+      if (
+        typeof window.proceedToCheckout ===
+        "function"
+      ) {
+
+        window.proceedToCheckout();
+
+        return;
+
+      }
+
+
+      /*
+        Existing checkout page fallback.
+      */
+
+      window.location.href =
+        "checkout.html";
+
+    }
+
+  </script>
+
+
+</body>
+
+</html>
