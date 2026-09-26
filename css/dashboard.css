@@ -1,0 +1,807 @@
+/* ==========================================================================
+   SELLER DASHBOARD STYLESHEET
+   Theme: White, Orange & Grey (Avoiding washed-out light grey backgrounds)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Palette */
+  --primary-orange: #ff5e00;
+  --primary-orange-hover: #e55300;
+  --primary-orange-active: #cc4900;
+  --primary-orange-soft: #fff3ec;
+  --primary-orange-border: #ffd5be;
+
+  /* Neutrals: Pure Crisp White & Deep Charcoal / Slate */
+  --bg-page: #ffffff;
+  --bg-surface: #ffffff;
+  --bg-sidebar: #12151a;
+  --bg-sidebar-hover: #1a1e26;
+  --bg-sidebar-active: #242934;
+
+  /* Typography & Element Greys */
+  --text-main: #111827;
+  --text-charcoal: #1f2937;
+  --text-medium-grey: #4b5563;
+  --text-muted-grey: #6b7280;
+  --text-white: #ffffff;
+
+  /* Crisp Borders */
+  --border-clean: #e5e7eb;
+  --border-sidebar: #232832;
+  --border-focus: #ff5e00;
+
+  /* Status Colors */
+  --status-approved: #10b981;
+  --status-approved-bg: #ecfdf5;
+  --status-pending: #ff5e00;
+  --status-pending-bg: #fff3ec;
+  --status-rejected: #ef4444;
+  --status-rejected-bg: #fef2f2;
+
+  /* Shadows */
+  --shadow-subtle: 0 4px 16px rgba(17, 24, 39, 0.05);
+  --shadow-hover: 0 12px 28px rgba(17, 24, 39, 0.08);
+  --shadow-orange: 0 8px 20px rgba(255, 94, 0, 0.25);
+  
+  --transition-fast: all 0.2s ease-in-out;
+  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-width: 280px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Dashboard Layout Architecture
+   ========================================================================== */
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-page);
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar Component (Left Navigation Menu)
+   -------------------------------------------------------------------------- */
+.dashboard-sidebar {
+  width: var(--sidebar-width);
+  background-color: var(--bg-sidebar);
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  transition: var(--transition-smooth);
+  border-right: 1px solid var(--border-sidebar);
+  overflow-y: auto;
+}
+
+/* Brand Header */
+.sidebar-header {
+  padding: 1.5rem 1.25rem 1.25rem;
+  border-bottom: 1px solid var(--border-sidebar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-brand {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #ffffff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.sidebar-brand .brand-badge {
+  background-color: var(--primary-orange);
+  color: #ffffff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.sidebar-brand span.highlight {
+  color: var(--primary-orange);
+}
+
+.sidebar-badge-seller {
+  font-size: 0.65rem;
+  background-color: rgba(255, 94, 0, 0.18);
+  color: #ff7e33;
+  border: 1px solid rgba(255, 94, 0, 0.35);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 0.2rem 0.5rem;
+  border-radius: 50px;
+  text-transform: uppercase;
+}
+
+/* Seller Quick Profile Mini-Card in Sidebar */
+.sidebar-seller-card {
+  padding: 1rem 1.25rem;
+  margin: 0.75rem 1rem;
+  background-color: var(--bg-sidebar-hover);
+  border: 1px solid var(--border-sidebar);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.seller-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-orange);
+}
+
+.seller-mini-info {
+  min-width: 0;
+}
+
+.seller-mini-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #ffffff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seller-mini-store {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sidebar Nav Menu Buttons */
+.sidebar-menu-section {
+  padding: 0.5rem 0.75rem;
+  flex-grow: 1;
+}
+
+.sidebar-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+  padding: 0.75rem 0.75rem 0.35rem;
+}
+
+.sidebar-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.sidebar-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  background-color: transparent;
+  border: none;
+  border-radius: 10px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.sidebar-btn i {
+  font-size: 1.15rem;
+  color: #94a3b8;
+  transition: var(--transition-fast);
+}
+
+.sidebar-btn:hover {
+  background-color: var(--bg-sidebar-hover);
+  color: #ffffff;
+}
+
+.sidebar-btn:hover i {
+  color: var(--primary-orange);
+}
+
+.sidebar-btn.active {
+  background-color: var(--primary-orange);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(255, 94, 0, 0.3);
+}
+
+.sidebar-btn.active i {
+  color: #ffffff;
+}
+
+.sidebar-btn .badge-counter {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 50px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.sidebar-btn.active .badge-counter {
+  background-color: #ffffff;
+  color: var(--primary-orange);
+}
+
+/* Sidebar Footer (Logout) */
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border-sidebar);
+}
+
+.sidebar-btn-logout {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #f87171;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.sidebar-btn-logout:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Main Content Area
+   -------------------------------------------------------------------------- */
+.dashboard-main {
+  margin-left: var(--sidebar-width);
+  flex-grow: 1;
+  min-width: 0;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top Navbar (Synced with Sidebar) */
+.dashboard-navbar {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-clean);
+  padding: 0.85rem 1.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  box-shadow: var(--shadow-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar-left-wrap {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-sidebar-toggle {
+  background: transparent;
+  border: 1px solid var(--border-clean);
+  color: var(--text-charcoal);
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: none;
+}
+
+.btn-sidebar-toggle:hover {
+  border-color: var(--primary-orange);
+  color: var(--primary-orange);
+}
+
+.view-breadcrumb {
+  display: flex;
+  flex-direction: column;
+}
+
+.view-title-main {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.view-subtitle-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted-grey);
+  margin: 0;
+}
+
+/* Navbar Actions */
+.navbar-right-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.navbar-quick-btn {
+  background-color: #ffffff;
+  border: 1.5px solid var(--border-clean);
+  color: var(--text-charcoal);
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition-fast);
+}
+
+.navbar-quick-btn:hover {
+  border-color: var(--primary-orange);
+  color: var(--primary-orange);
+}
+
+.navbar-btn-orange {
+  background-color: var(--primary-orange);
+  color: #ffffff;
+  border: 1px solid var(--primary-orange);
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition-smooth);
+}
+
+.navbar-btn-orange:hover {
+  background-color: var(--primary-orange-hover);
+  box-shadow: var(--shadow-orange);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   Dashboard Dynamic View Panes
+   -------------------------------------------------------------------------- */
+.dashboard-content-body {
+  padding: 2rem 2.25rem;
+  flex-grow: 1;
+}
+
+.dashboard-view-pane {
+  display: none;
+  animation: fadeIn 0.25s ease-in-out forwards;
+}
+
+.dashboard-view-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   Cards, Stats & Metrics (Pure White, Crisp Slate Borders)
+   -------------------------------------------------------------------------- */
+.dash-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-clean);
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-subtle);
+  transition: var(--transition-smooth);
+  height: 100%;
+}
+
+.dash-card:hover {
+  border-color: var(--primary-orange);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stat-icon-orange {
+  background-color: var(--primary-orange-soft);
+  color: var(--primary-orange);
+  border: 1px solid var(--primary-orange-border);
+}
+
+.stat-icon-green {
+  background-color: var(--status-approved-bg);
+  color: var(--status-approved);
+  border: 1px solid #a7f3d0;
+}
+
+.stat-icon-dark {
+  background-color: #1a1e26;
+  color: #ffffff;
+}
+
+.stat-metric-val {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-metric-label {
+  font-size: 0.85rem;
+  color: var(--text-muted-grey);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Add Product Form Styling & Dynamic Calculators
+   -------------------------------------------------------------------------- */
+.form-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-clean);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-label-dash {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-charcoal);
+  margin-bottom: 0.4rem;
+}
+
+.form-control-dash {
+  border: 1.5px solid var(--border-clean);
+  border-radius: 9px;
+  padding: 0.65rem 1rem;
+  font-size: 0.925rem;
+  color: var(--text-main);
+  background-color: #ffffff;
+  transition: var(--transition-fast);
+}
+
+.form-control-dash:focus {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.15);
+  outline: none;
+}
+
+.form-control-readonly {
+  background-color: #ffffff !important;
+  border: 1.5px dashed var(--primary-orange) !important;
+  color: var(--primary-orange) !important;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* Calculation Callout Box */
+.calc-callout-box {
+  background-color: var(--primary-orange-soft);
+  border: 1.5px solid var(--primary-orange-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calc-callout-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.calc-callout-val {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary-orange);
+  margin: 0;
+}
+
+/* Image Live Preview Container */
+.img-preview-box {
+  border: 2px dashed var(--border-clean);
+  border-radius: 12px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-fast);
+}
+
+.product-thumb {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #df7641;
+    background-color: #f9f9f9;
+}
+
+.img-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.img-preview-empty {
+  text-align: center;
+  color: var(--text-muted-grey);
+}
+
+/* --------------------------------------------------------------------------
+   Tables (Product Status, My Products, Orders)
+   -------------------------------------------------------------------------- */
+.dash-table-wrap {
+  background-color: #ffffff;
+  border: 1px solid var(--border-clean);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+}
+
+.dash-table {
+  width: 100%;
+  margin-bottom: 0;
+  vertical-align: middle;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dash-table thead {
+  background-color: #ffffff;
+  border-bottom: 2px solid var(--border-clean);
+}
+
+.dash-table th {
+  padding: 1rem 1.25rem;
+  font-size: 0.825rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted-grey);
+  border-bottom: 1px solid var(--border-clean);
+  white-space: nowrap;
+}
+
+.dash-table td {
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  color: var(--text-charcoal);
+  border-bottom: 1px solid var(--border-clean);
+  background-color: #ffffff;
+}
+
+.dash-table tr:last-child td {
+  border-bottom: none;
+}
+
+.dash-table tr:hover td {
+  background-color: #fffaf5;
+}
+
+/* Status Badges */
+.badge-status-approved {
+  background-color: var(--status-approved-bg);
+  color: var(--status-approved);
+  border: 1px solid #a7f3d0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-status-pending {
+  background-color: var(--status-pending-bg);
+  color: var(--primary-orange);
+  border: 1px solid var(--primary-orange-border);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-status-rejected {
+  background-color: var(--status-rejected-bg);
+  color: var(--status-rejected);
+  border: 1px solid #fecaca;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Table Item Thumbnails */
+.table-prod-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border-clean);
+}
+
+/* Inline Stock Input */
+.stock-input-inline {
+  width: 80px;
+  border: 1.5px solid var(--border-clean);
+  border-radius: 6px;
+  padding: 0.3rem 0.5rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-main);
+  outline: none;
+  transition: var(--transition-fast);
+}
+
+.stock-input-inline:focus {
+  border-color: var(--primary-orange);
+}
+
+/* Filter Pills on Tables */
+.status-pill-btn {
+  background-color: #ffffff;
+  border: 1.5px solid var(--border-clean);
+  color: var(--text-charcoal);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.status-pill-btn:hover {
+  border-color: var(--primary-orange);
+  color: var(--primary-orange);
+}
+
+.status-pill-btn.active {
+  background-color: var(--primary-orange);
+  border-color: var(--primary-orange);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(255, 94, 0, 0.25);
+}
+
+/* --------------------------------------------------------------------------
+   Customer Reviews Cards
+   -------------------------------------------------------------------------- */
+.review-card {
+  background-color: #ffffff;
+  border: 1px solid var(--border-clean);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  transition: var(--transition-fast);
+}
+
+.review-card:hover {
+  border-color: var(--primary-orange);
+}
+
+.review-seller-reply {
+  background-color: var(--primary-orange-soft);
+  border-left: 3px solid var(--primary-orange);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Mobile Adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 991.98px) {
+  .dashboard-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .dashboard-sidebar.show-sidebar {
+    transform: translateX(0);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .dashboard-main {
+    margin-left: 0;
+  }
+
+  .btn-sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dashboard-content-body {
+    padding: 1.25rem 1rem;
+  }
+}
+
+/* Backdrop for mobile drawer */
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(18, 21, 26, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 1035;
+}
+
+.sidebar-backdrop.show {
+  display: block;
+}
