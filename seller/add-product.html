@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - ApexMart</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+
+<body>
+
+<div id="sellerPage" data-page="add-product">
+
+    <section class="dashboard-view-pane active">
+        <div class="dash-card">
+
+            <h4 class="fw-bold text-dark mb-1">Post New Product<br></h4>
+            <form id="addProductForm">
+
+                <div class="row g-3">
+
+                    <!-- Product ID -->
+
+
+                    <!-- Product Name -->
+                    <div class="col-md-8">
+                        <label class="form-label form-label-dash">
+                            Product Title / Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control form-control-dash"
+                            id="addProductName"
+                            name="name"
+                            required
+                            maxlength="255"
+                            placeholder="Enter product name"
+                        >
+                    </div>
+
+
+                    <!-- Category -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Category *
+                        </label>
+
+                        <select
+                            class="form-select form-control-dash"
+                            id="addProductCategory"
+                            name="category"
+                            required
+                        >
+                            <option value="">Select Category...</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="audio">Audio &amp; Sound</option>
+                            <option value="wearables">Wearables</option>
+                            <option value="fashion">Fashion &amp; Bags</option>
+                            <option value="home">Home &amp; Living</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Brand -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Brand Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control form-control-dash"
+                            id="addProductBrand"
+                            name="brand"
+                            required
+                            maxlength="255"
+                            placeholder="Enter brand name"
+                        >
+                    </div>
+
+
+                    <!-- Badge -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Product Badge
+                        </label>
+
+                        <select
+                            class="form-select form-control-dash"
+                            id="addProductBadge"
+                            name="badge"
+                        >
+                            <option value="">None</option>
+                            <option value="New">New</option>
+                            <option value="Hot">Hot</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="Sale">Sale</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Stock -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Stock Quantity *
+                        </label>
+
+                        <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            class="form-control form-control-dash"
+                            id="addProductStock"
+                            name="stock"
+                            required
+                            placeholder="Enter quantity"
+                        >
+                    </div>
+
+
+                    <!-- Spacer -->
+                    <div class="col-md-4 d-none d-md-block"></div>
+
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label class="form-label form-label-dash">
+                            Detailed Description *
+                        </label>
+
+                        <textarea
+                            class="form-control form-control-dash"
+                            id="addProductDescription"
+                            name="description"
+                            rows="4"
+                            required
+                            placeholder="Describe the product in detail..."
+                        ></textarea>
+                    </div>
+
+
+                    <!-- Key Highlights -->
+                    <div class="col-12">
+                        <label class="form-label form-label-dash">
+                            Key Highlights *
+                            <small class="text-muted">(one per line)</small>
+                        </label>
+
+                        <textarea
+                            class="form-control form-control-dash"
+                            id="addProductFeatures"
+                            name="features"
+                            rows="4"
+                            required
+                            placeholder="Active noise cancellation
+30-hour battery life
+Bluetooth 5.3"
+                        ></textarea>
+                    </div>
+
+
+                    <!-- Regular Price -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Regular Price ($) *
+                            <small class="text-muted">(oldPrice)</small>
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0.01"
+                            class="form-control form-control-dash"
+                            id="addProductPrice"
+                            name="oldPrice"
+                            required
+                            placeholder="0.00"
+                        >
+                    </div>
+
+
+                    <!-- Discount -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Discount (%)
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.1"
+                            min="0"
+                            max="95"
+                            class="form-control form-control-dash"
+                            id="addProductDiscount"
+                            name="discount"
+                            value="0"
+                        >
+                    </div>
+
+
+                    <!-- Sale Price -->
+                    <div class="col-md-4">
+                        <label class="form-label form-label-dash">
+                            Sale Price ($)
+                            <small class="text-muted">(price)</small>
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.05"
+                            class="form-control form-control-dash form-control-readonly"
+                            id="addProductSalePrice"
+                            name="price"
+                            placeholder="0.00"
+                            readonly
+                        >
+                    </div>
+
+
+                    <!-- Price Calculation -->
+                    <div class="col-12">
+
+                        <div class="calc-callout-box">
+                            <span>Calculated Final Sale Price</span>
+
+                            <strong id="displaySalePrice">
+                                $0.00
+                            </strong>
+                        </div>
+
+                        <div class="small text-muted mt-2">
+
+                            Customers will see:
+
+                            <strong
+                                class="text-dark"
+                                id="previewCurrentPrice"
+                            >
+                                $0.00
+                            </strong>
+
+                            <s
+                                class="ms-1"
+                                id="previewOldPrice"
+                            ></s>
+
+                            <span class="badge bg-success ms-1 d-none" id="previewSavings"></span>
+                        </div>
+                    </div>
+
+                    <!-- Image URL -->
+                    <div class="col-md-6">
+                        <label class="form-label form-label-dash">Image URL</label>
+                        <input
+                            type="url"
+                            class="form-control form-control-dash"
+                            id="addProductImageUrl"
+                            name="image"
+                            placeholder="https://example.com/product.jpg">
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="col-md-6">
+                        <label class="form-label form-label-dash">
+                            Or Upload Image
+                        </label>
+                        <input
+                            type="file"
+                            class="form-control form-control-dash"
+                            id="addProductImageFile"
+                            accept="image/*">
+                    </div>
+
+                    <!-- Error message -->
+                    <div class="col-12">
+                        <div id="imageError" class="text-danger" style="display: none;">
+                            Please provide an image URL or upload an image.
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="col-12">
+                        <img
+                            id="addProductImagePreview"
+                            src=""
+                            alt="Product Preview"
+                            class="img-fluid rounded-3 border d-none"
+                            style="max-height: 180px; object-fit: contain;">
+                    </div>
+
+                    <!-- System controlled fields -->
+                    <input
+                        type="hidden"
+                        id="addProductRating"
+                        name="rating"
+                        value="0">
+
+                    <input
+                        type="hidden"
+                        id="addProductReviews"
+                        name="reviews"
+                        value="0">
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+
+                    <button
+                        type="reset"
+                        class="btn btn-outline-secondary"
+                        id="resetProductButton">
+                        Reset
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-orange px-4"
+                        id="submitProductButton">
+                        <i class="bi bi-cloud-arrow-up-fill me-1"></i>
+                        Submit Product
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </section>
+
+</div>
+
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Existing ApexMart JavaScript -->
+<script src="../js/products.js"></script>
+<script src="../js/seller-layout.js"></script>
+<script src="../js/seller-dashboard.js"></script>
+<script>
+
+    const PRODUCT_API_URL = "http://127.0.0.1:8000/api/products";
+
+    function calculateProductSalePrice() {
+        const regularPrice = parseFloat(
+                document.getElementById("addProductPrice").value
+            ) || 0;
+        const discount = parseFloat(
+                document.getElementById("addProductDiscount").value
+            ) || 0;
+        let salePrice = regularPrice - (regularPrice * discount / 100);
+        if (salePrice < 0) {
+            salePrice = 0;
+        }
+        salePrice =
+            Math.round((salePrice + Number.EPSILON) * 100) / 100;
+        document.getElementById("addProductSalePrice").value =
+            salePrice.toFixed(2);
+        document.getElementById("displaySalePrice").textContent =
+            "$" + salePrice.toFixed(2);
+        document.getElementById("previewCurrentPrice").textContent =
+            "$" + salePrice.toFixed(2);
+        const oldPriceElement = document.getElementById("previewOldPrice");
+        const savingsElement = document.getElementById("previewSavings");
+        if (
+            regularPrice > 0 &&
+            discount > 0
+        ) {
+            oldPriceElement.textContent =
+                "$" + regularPrice.toFixed(2);
+            savingsElement.textContent =
+                discount + "% OFF";
+            savingsElement.classList.remove("d-none");
+        } else {
+            oldPriceElement.textContent = "";
+            savingsElement.textContent = "";
+            savingsElement.classList.add("d-none");
+        }
+    }
+
+    /* Recalculate whenever price or discount changes.*/
+    document
+        .getElementById("addProductPrice")
+        .addEventListener(
+            "input",
+            calculateProductSalePrice
+        );
+    document
+        .getElementById("addProductDiscount")
+        .addEventListener(
+            "input",
+            calculateProductSalePrice
+        );
+
+    /*Image URL Preview*/
+    document
+        .getElementById("addProductImageUrl")
+        .addEventListener("input", function () {
+            const url = this.value.trim();
+            const preview =
+                document.getElementById(
+                    "addProductImagePreview"
+                );
+            if (url) {
+                preview.src = url;
+                preview.classList.remove("d-none");
+            } else {
+                preview.src = "";
+                preview.classList.add("d-none");
+            }
+        });
+
+    /*Uploaded Image Preview*/
+    document
+        .getElementById("addProductImageFile")
+        .addEventListener("change", function (event) {
+            const file =
+                event.target.files[0];
+            const preview =
+                document.getElementById(
+                    "addProductImagePreview"
+                );
+            if (!file) {
+                return;
+            }
+            if (!file.type.startsWith("image/")) {
+                alert("Please select a valid image file.");
+                this.value = "";
+                preview.src = "";
+                preview.classList.add("d-none");
+                return;
+            }
+            const reader =
+                new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove("d-none");
+            };
+            reader.readAsDataURL(file);
+        });
+
+
+
+
+    /*Submit Product */
+
+    document
+        .getElementById("addProductForm")
+        .addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const submitButton = document.getElementById(
+                    "submitProductButton"
+                );
+
+            /*Get values from form*/
+            const name = document
+                    .getElementById("addProductName")
+                    .value
+                    .trim();
+            const category = document
+                    .getElementById("addProductCategory")
+                    .value;
+
+            const brand = document
+                    .getElementById("addProductBrand")
+                    .value
+                    .trim();
+            const badge = document
+                    .getElementById("addProductBadge")
+                    .value;
+            const stock = parseInt(
+                    document
+                        .getElementById("addProductStock")
+                        .value,
+                    10
+                );
+            const description = document
+                    .getElementById("addProductDescription")
+                    .value
+                    .trim();
+            const featuresText = document
+                    .getElementById("addProductFeatures")
+                    .value
+                    .trim();
+            const oldPrice = parseFloat(
+                    document
+                        .getElementById("addProductPrice")
+                        .value
+                );
+            const discount = parseFloat(
+                    document
+                        .getElementById("addProductDiscount")
+                        .value
+                ) || 0;
+            const salePrice = parseFloat(
+                    document
+                        .getElementById("addProductSalePrice")
+                        .value
+                );
+
+                const imageUrl = document.getElementById("addProductImageUrl").value.trim();
+                const imageFile = document.getElementById("addProductImageFile").files[0];
+                const imageError = document.getElementById("imageError");
+
+// Reset error
+imageError.style.display = "none";
+
+// Require either image URL or uploaded image
+        imageError.style.display = "none";
+
+        if (!imageUrl && !imageFile) {
+            imageError.textContent =
+                "Please provide an image URL or upload an image.";
+            imageError.style.display = "block";
+            return;
+        }
+        // This will contain either the URL or uploaded image path
+        let imagePath = imageUrl;
+
+
+    if (imageFile) {
+    const imageFormData = new FormData();
+    imageFormData.append("image", imageFile);
+
+    const uploadResponse = await fetch(
+        "http://127.0.0.1:8000/api/products/upload-image",
+        {
+            method: "POST",
+            body: imageFormData
+        }
+    );
+
+    if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(
+            errorData.detail || "Image upload failed."
+        );
+    }
+
+    const uploadResult = await uploadResponse.json();
+
+    imagePath = uploadResult.image;
+}
+
+
+
+            /*Convert the "one per line" feature field into an array.*/
+            const features =
+                featuresText
+                    .split("\n")
+                    .map(feature => feature.trim())
+                    .filter(feature => feature.length > 0);
+
+            /*Basic validation*/
+            if (!name) {
+                alert("Please enter the product name.");
+                return;
+            }
+            if (!category) {
+                alert("Please select a category.");
+                return;
+            }
+            if (!brand) {
+                alert("Please enter the brand name.");
+                return;
+            }
+            if (
+                Number.isNaN(stock) ||
+                stock < 0
+            ) {
+                alert("Please enter a valid stock quantity.");
+                return;
+            }
+            if (
+                Number.isNaN(oldPrice) ||
+                oldPrice <= 0
+            ) {
+                alert("Please enter a valid regular price.");
+                return;
+            }
+            if (
+                Number.isNaN(discount) ||
+                discount < 0 ||
+                discount > 95
+            ) {
+                alert("Discount must be between 0% and 95%.");
+                return;
+            }
+            
+
+            
+
+            /*Make sure sale price is calculated before sending the request. */
+            calculateProductSalePrice();
+
+            /*
+             * Re-read calculated sale price.
+             */
+
+            const finalSalePrice =
+                parseFloat(
+                    document
+                        .getElementById("addProductSalePrice")
+                        .value
+                );
+
+            /* Product data sent to FastAPI
+             * Product ID is intentionally NOT generated here.
+             * The backend/database should generate it.*/
+            const sellerId = localStorage.getItem("seller_id");
+
+            if (!sellerId) {
+                throw new Error("Seller is not logged in.");
+            }
+            const productData = {
+                seller_id: Number(sellerId),
+                name: name,
+                category: category,
+                brand: brand,
+                badge: badge || null,
+                stock: stock,
+                description: description,
+                features: features,
+                oldPrice: oldPrice,
+                discount: discount,
+                price: finalSalePrice,
+                image: imagePath,
+                rating: 0,
+                reviews: 0
+            };
+
+            /*Disable button while request is running.*/
+            submitButton.disabled = true;
+            submitButton.innerHTML =
+                '<span class="spinner-border spinner-border-sm me-2"></span>' +
+                'Submitting...';
+            try {
+                /*Send product to FastAPI.*/
+
+                const response = await fetch(
+                        PRODUCT_API_URL,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+                            body:
+                                JSON.stringify(productData)
+                        }
+                    );
+
+                /*Read response safely.*/
+                let result = null;
+                try {
+                    result =
+                        await response.json();
+                } catch (jsonError) {
+                    result = null;
+                }
+                /*FastAPI returned an error. */
+                if (!response.ok) {
+                    let message =
+                        "Unable to submit product.";
+                    if (result) {
+                        if (result.detail) {
+                            if (
+                                Array.isArray(
+                                    result.detail
+                                )
+                            ) {
+                                message =
+                                    result.detail
+                                        .map(
+                                            error =>
+                                                error.msg ||
+                                                "Validation error"
+                                        )
+                                        .join("\n");
+                            } else {
+                                message =
+                                    result.detail;
+                            }
+                        }
+                    }
+                    throw new Error(message);
+                }
+                /* Product successfully created.*/
+                alert(
+                    "Product submitted successfully.\n\n" +
+                    "The product has been sent to the backend."
+                );
+
+                /* Reset form after successful submission. */
+                document
+                    .getElementById("addProductForm")
+                    .reset();
+                document
+                    .getElementById("addProductSalePrice")
+                    .value = "0.00";
+                document
+                    .getElementById("displaySalePrice")
+                    .textContent = "$0.00";
+                document
+                    .getElementById("previewCurrentPrice")
+                    .textContent = "$0.00";
+                document
+                    .getElementById("previewOldPrice")
+                    .textContent = "";
+                document
+                    .getElementById("previewSavings")
+                    .textContent = "";
+                document
+                    .getElementById("previewSavings")
+                    .classList.add("d-none");
+                document
+                    .getElementById("addProductImagePreview")
+                    .src = "";
+                document
+                    .getElementById("addProductImagePreview")
+                    .classList.add("d-none");
+            } catch (error) {
+                console.error(
+                    "Product submission error:",
+                    error
+                );
+
+                /* Connection error usually meansFastAPI is not running or the URL/port is incorrect. */
+                if (
+                    error instanceof
+                    TypeError
+                ) {
+                    alert(
+                        "Cannot connect to the server.\n\n" +
+                        "Please make sure FastAPI is running."
+                    );
+                } else {
+                    alert(
+                        "Product submission failed.\n\n" +
+                        error.message
+                    );
+                }
+            } finally {
+                /*Enable submit button again.*/
+                submitButton.disabled = false;
+                submitButton.innerHTML =
+                    '<i class="bi bi-cloud-arrow-up-fill me-1"></i>' +
+                    'Submit Product';
+            }
+        });
+
+    /*Reset button*/
+    document
+        .getElementById("resetProductButton")
+        .addEventListener("click", function () {
+            setTimeout(function () {
+                document
+                    .getElementById("addProductSalePrice")
+                    .value = "0.00";
+                document
+                    .getElementById("displaySalePrice")
+                    .textContent = "$0.00";
+                document
+                    .getElementById("previewCurrentPrice")
+                    .textContent = "$0.00";
+                document
+                    .getElementById("previewOldPrice")
+                    .textContent = "";
+                document
+                    .getElementById("previewSavings")
+                    .textContent = "";
+                document
+                    .getElementById("previewSavings")
+                    .classList.add("d-none");
+                document
+                    .getElementById("addProductImagePreview")
+                    .src = "";
+                document
+                    .getElementById("addProductImagePreview")
+                    .classList.add("d-none");
+            }, 0);
+        });
+
+    /*Initial calculation*/
+    calculateProductSalePrice();
+
+</script>
+
+</body>
+</html>
