@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>My Wishlist - ApexMart</title>
+
+
+  <!-- Bootstrap -->
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  >
+
+
+  <!-- Bootstrap Icons -->
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+
+
+  <!-- Existing ApexMart CSS -->
+
+  <link rel="stylesheet" href="../css/style.css">
+
+
+  <style>
+
+    /* =========================
+       GENERAL
+    ========================== */
+
+    body {
+      background: #f7f7f8;
+    }
+
+
+    .dashboard-wrapper {
+      padding: 40px 0 60px;
+    }
+
+
+    /* =========================
+       SIDEBAR
+    ========================== */
+
+    .dashboard-sidebar {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      height: 100%;
+    }
+
+
+    .dashboard-sidebar h5 {
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+
+    .dashboard-sidebar .nav-link {
+      color: #333;
+      border-radius: 10px;
+      padding: 11px 14px;
+      margin-bottom: 6px;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+
+    .dashboard-sidebar .nav-link:hover,
+    .dashboard-sidebar .nav-link.active {
+      background: #ff6b00;
+      color: white;
+    }
+
+
+    /* =========================
+       MAIN CONTENT
+    ========================== */
+
+    .dashboard-content-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+      margin-bottom: 24px;
+    }
+
+
+    /* =========================
+       PAGE HEADER
+    ========================== */
+
+    .wishlist-header {
+      margin-bottom: 28px;
+    }
+
+
+    .wishlist-header h1 {
+      font-weight: 800;
+      color: #111827;
+      margin-bottom: 6px;
+    }
+
+
+    .wishlist-header p {
+      color: #6b7280;
+      margin-bottom: 0;
+    }
+
+
+    /* =========================
+       WISHLIST SUMMARY
+    ========================== */
+
+    .wishlist-summary {
+      background: #fff3e8;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+
+    .wishlist-summary-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      background: #ff6b00;
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 22px;
+    }
+
+
+    .wishlist-summary h5 {
+      margin: 0;
+      font-weight: 700;
+    }
+
+
+    .wishlist-summary p {
+      margin: 2px 0 0;
+      color: #777;
+    }
+
+
+    /* =========================
+       PRODUCT CARD
+    ========================== */
+
+    .wishlist-card {
+      background: #fff;
+      border: 1px solid #ececec;
+      border-radius: 16px;
+      overflow: hidden;
+      height: 100%;
+      transition: 0.2s;
+    }
+
+
+    .wishlist-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.07);
+    }
+
+
+    .wishlist-image-wrapper {
+      position: relative;
+      background: #f5f5f5;
+      height: 210px;
+      overflow: hidden;
+    }
+
+
+    .wishlist-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+
+    .remove-wishlist {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+
+      width: 38px;
+      height: 38px;
+
+      border: none;
+      border-radius: 50%;
+
+      background: white;
+      color: #dc3545;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 18px;
+
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+
+      transition: 0.2s;
+    }
+
+
+    .remove-wishlist:hover {
+      background: #dc3545;
+      color: white;
+    }
+
+
+    .wishlist-card-body {
+      padding: 18px;
+    }
+
+
+    .product-category {
+      color: #888;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+
+    .product-title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+
+    .product-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+
+    .old-price {
+      color: #999;
+      text-decoration: line-through;
+      font-size: 14px;
+      margin-left: 7px;
+    }
+
+
+    .discount-badge {
+      display: inline-block;
+      background: #e8f7ee;
+      color: #198754;
+      padding: 4px 8px;
+      border-radius: 15px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 5px;
+    }
+
+
+    /* =========================
+       BUTTONS
+    ========================== */
+
+    .btn-orange {
+      background: #ff6b00;
+      border-color: #ff6b00;
+      color: white;
+    }
+
+
+    .btn-orange:hover {
+      background: #e85f00;
+      border-color: #e85f00;
+      color: white;
+    }
+
+
+    /* =========================
+       EMPTY WISHLIST
+    ========================== */
+
+    .empty-wishlist {
+      text-align: center;
+      padding: 70px 20px;
+    }
+
+
+    .empty-wishlist-icon {
+      width: 85px;
+      height: 85px;
+      border-radius: 50%;
+      background: #fff3e8;
+      color: #ff6b00;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 38px;
+
+      margin: 0 auto 20px;
+    }
+
+
+    .empty-wishlist h3 {
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+
+    .empty-wishlist p {
+      color: #777;
+      margin-bottom: 22px;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 767px) {
+
+      .wishlist-image-wrapper {
+        height: 240px;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <nav class="navbar navbar-expand-lg bg-white shadow-sm">
+
+    <div class="container">
+
+
+      <!-- Logo -->
+
+      <a
+        class="navbar-brand fw-bold fs-4"
+        href="../main/index.html"
+      >
+        Apex<span style="color:#ff6b00;">Mart</span>
+      </a>
+
+
+      <!-- Mobile Toggle -->
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#wishlistNavbar"
+        aria-controls="wishlistNavbar"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+
+        <span class="navbar-toggler-icon"></span>
+
+      </button>
+
+
+      <!-- Navbar Links -->
+
+      <div
+        class="collapse navbar-collapse"
+        id="wishlistNavbar"
+      >
+
+        <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-3">
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="../main/index.html"
+            >
+              Home
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="dashboard.html"
+            >
+              Dashboard
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link"
+              href="orders.html"
+            >
+              Orders
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="nav-link active"
+              href="wishlist.html"
+            >
+              Wishlist
+            </a>
+
+          </li>
+
+
+          <li class="nav-item">
+
+            <a
+              class="btn btn-outline-dark"
+              href="profile.html"
+            >
+
+              <i class="bi bi-person"></i>
+              Profile
+
+            </a>
+
+          </li>
+
+
+        </ul>
+
+      </div>
+
+    </div>
+
+  </nav>
+
+
+
+  <!-- =========================
+       WISHLIST PAGE
+  ========================== -->
+
+  <main class="dashboard-wrapper">
+
+    <div class="container">
+
+      <div class="row g-4">
+
+
+        <!-- =========================
+             SIDEBAR
+        ========================== -->
+
+        <div class="col-lg-3">
+
+          <div class="dashboard-sidebar">
+
+            <h5>
+              My Account
+            </h5>
+
+
+            <nav class="nav flex-column">
+
+
+              <a
+                class="nav-link"
+                href="dashboard.html"
+              >
+
+                <i class="bi bi-grid me-2"></i>
+
+                Dashboard
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="profile.html"
+              >
+
+                <i class="bi bi-person me-2"></i>
+
+                My Profile
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="orders.html"
+              >
+
+                <i class="bi bi-box-seam me-2"></i>
+
+                My Orders
+
+              </a>
+
+
+              <!-- Wishlist Active -->
+
+              <a
+                class="nav-link active"
+                href="wishlist.html"
+              >
+
+                <i class="bi bi-heart me-2"></i>
+
+                Wishlist
+
+              </a>
+
+
+              <a
+                class="nav-link"
+                href="checkout.html"
+              >
+
+                <i class="bi bi-credit-card me-2"></i>
+
+                Checkout
+
+              </a>
+
+
+              <a
+                class="nav-link text-danger"
+                href="../account/login.html"
+              >
+
+                <i class="bi bi-box-arrow-right me-2"></i>
+
+                Logout
+
+              </a>
+
+
+            </nav>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             MAIN CONTENT
+        ========================== -->
+
+        <div class="col-lg-9">
+
+          <div class="dashboard-content-card">
+
+
+            <!-- Header -->
+
+            <div class="wishlist-header">
+
+              <h1>
+                My Wishlist
+              </h1>
+
+              <p>
+                Save your favorite products and shop them later
+              </p>
+
+            </div>
+
+
+
+            <!-- Summary -->
+
+            <div class="wishlist-summary">
+
+              <div class="wishlist-summary-icon">
+
+                <i class="bi bi-heart-fill"></i>
+
+              </div>
+
+
+              <div>
+
+                <h5>
+
+                  <span id="wishlistCount">4</span> Saved Items
+
+                </h5>
+
+                <p>
+                  Products you have saved for later
+                </p>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- =========================
+                 WISHLIST PRODUCTS
+            ========================== -->
+
+            <div
+              class="row g-4"
+              id="wishlistContainer"
+            >
+
+
+              <!-- Product 1 -->
+
+              <div
+                class="col-md-6"
+                data-wishlist-item="1"
+              >
+
+                <div class="wishlist-card">
+
+
+                  <div class="wishlist-image-wrapper">
+
+                    <img
+                      src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600"
+                      class="wishlist-image"
+                      alt="Sony Headphones"
+                    >
+
+
+                    <button
+                      type="button"
+                      class="remove-wishlist"
+                      onclick="removeWishlistItem(this)"
+                      aria-label="Remove from wishlist"
+                    >
+
+                      <i class="bi bi-x-lg"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  <div class="wishlist-card-body">
+
+                    <div class="product-category">
+                      Audio
+                    </div>
+
+
+                    <h5 class="product-title">
+                      Sony WH-1000XM5 Headphones
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                      <span class="product-price">
+                        $349.99
+                      </span>
+
+                      <span class="old-price">
+                        $399.99
+                      </span>
+
+                      <span class="discount-badge">
+                        12% OFF
+                      </span>
+
+                    </div>
+
+
+                    <button
+                      type="button"
+                      class="btn btn-orange w-100"
+                      onclick="addWishlistProductToCart(1)"
+                    >
+
+                      <i class="bi bi-cart-plus me-2"></i>
+
+                      Add to Cart
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Product 2 -->
+
+              <div
+                class="col-md-6"
+                data-wishlist-item="2"
+              >
+
+                <div class="wishlist-card">
+
+
+                  <div class="wishlist-image-wrapper">
+
+                    <img
+                      src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600"
+                      class="wishlist-image"
+                      alt="Apple Watch"
+                    >
+
+
+                    <button
+                      type="button"
+                      class="remove-wishlist"
+                      onclick="removeWishlistItem(this)"
+                      aria-label="Remove from wishlist"
+                    >
+
+                      <i class="bi bi-x-lg"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  <div class="wishlist-card-body">
+
+                    <div class="product-category">
+                      Smartwatch
+                    </div>
+
+
+                    <h5 class="product-title">
+                      Apple Watch Ultra 2
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                      <span class="product-price">
+                        $799.00
+                      </span>
+
+                      <span class="old-price">
+                        $849.00
+                      </span>
+
+                      <span class="discount-badge">
+                        6% OFF
+                      </span>
+
+                    </div>
+
+
+                    <button
+                      type="button"
+                      class="btn btn-orange w-100"
+                      onclick="addWishlistProductToCart(2)"
+                    >
+
+                      <i class="bi bi-cart-plus me-2"></i>
+
+                      Add to Cart
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Product 3 -->
+
+              <div
+                class="col-md-6"
+                data-wishlist-item="3"
+              >
+
+                <div class="wishlist-card">
+
+
+                  <div class="wishlist-image-wrapper">
+
+                    <img
+                      src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"
+                      class="wishlist-image"
+                      alt="Nike Shoes"
+                    >
+
+
+                    <button
+                      type="button"
+                      class="remove-wishlist"
+                      onclick="removeWishlistItem(this)"
+                      aria-label="Remove from wishlist"
+                    >
+
+                      <i class="bi bi-x-lg"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  <div class="wishlist-card-body">
+
+                    <div class="product-category">
+                      Footwear
+                    </div>
+
+
+                    <h5 class="product-title">
+                      Nike Air Max Running Shoes
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                      <span class="product-price">
+                        $129.99
+                      </span>
+
+                      <span class="old-price">
+                        $159.99
+                      </span>
+
+                      <span class="discount-badge">
+                        19% OFF
+                      </span>
+
+                    </div>
+
+
+                    <button
+                      type="button"
+                      class="btn btn-orange w-100"
+                      onclick="addWishlistProductToCart(5)"
+                    >
+
+                      <i class="bi bi-cart-plus me-2"></i>
+
+                      Add to Cart
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- Product 4 -->
+
+              <div
+                class="col-md-6"
+                data-wishlist-item="4"
+              >
+
+                <div class="wishlist-card">
+
+
+                  <div class="wishlist-image-wrapper">
+
+                    <img
+                      src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600"
+                      class="wishlist-image"
+                      alt="Coffee Maker"
+                    >
+
+
+                    <button
+                      type="button"
+                      class="remove-wishlist"
+                      onclick="removeWishlistItem(this)"
+                      aria-label="Remove from wishlist"
+                    >
+
+                      <i class="bi bi-x-lg"></i>
+
+                    </button>
+
+                  </div>
+
+
+                  <div class="wishlist-card-body">
+
+                    <div class="product-category">
+                      Home Appliances
+                    </div>
+
+
+                    <h5 class="product-title">
+                      Premium Coffee Maker
+                    </h5>
+
+
+                    <div class="mb-3">
+
+                      <span class="product-price">
+                        $89.99
+                      </span>
+
+                      <span class="old-price">
+                        $109.99
+                      </span>
+
+                      <span class="discount-badge">
+                        18% OFF
+                      </span>
+
+                    </div>
+
+
+                    <button
+                      type="button"
+                      class="btn btn-orange w-100"
+                      onclick="addWishlistProductToCart(9)"
+                    >
+
+                      <i class="bi bi-cart-plus me-2"></i>
+
+                      Add to Cart
+
+                    </button>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 EMPTY STATE
+            ========================== -->
+
+            <div
+              id="emptyWishlist"
+              class="empty-wishlist d-none"
+            >
+
+              <div class="empty-wishlist-icon">
+
+                <i class="bi bi-heart"></i>
+
+              </div>
+
+
+              <h3>
+                Your Wishlist is Empty
+              </h3>
+
+
+              <p>
+                You haven't saved any products yet.
+              </p>
+
+
+              <a
+                href="../main/index.html"
+                class="btn btn-orange"
+              >
+
+                <i class="bi bi-bag me-2"></i>
+
+                Continue Shopping
+
+              </a>
+
+            </div>
+
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </main>
+
+
+
+  <!-- Bootstrap JS -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+  </script>
+
+
+  <!-- Products Data -->
+
+  <script src="../js/products.js"></script>
+
+
+  <!-- Wishlist JavaScript -->
+
+  <script>
+
+    /* =========================
+       LOAD WISHLIST FROM DATABASE
+    ========================== */
+
+    async function loadWishlist() {
+
+      const user = JSON.parse(
+        localStorage.getItem('apexmart_user')
+      );
+
+      if (!user || !user.id) {
+        alert('Please login before viewing your wishlist.');
+        return;
+      }
+
+      try {
+
+        const response = await fetch(
+          `http://127.0.0.1:8000/customer/wishlist/${user.id}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to load wishlist.');
+        }
+
+        const wishlistItems = await response.json();
+
+        const container =
+          document.getElementById('wishlistContainer');
+
+        const emptyWishlist =
+          document.getElementById('emptyWishlist');
+
+        container.innerHTML = '';
+
+        document.getElementById('wishlistCount').textContent =
+          wishlistItems.length;
+
+        if (wishlistItems.length === 0) {
+          container.classList.add('d-none');
+          emptyWishlist.classList.remove('d-none');
+          return;
+        }
+
+        container.classList.remove('d-none');
+        emptyWishlist.classList.add('d-none');
+
+        wishlistItems.forEach(item => {
+
+          const oldPrice = item.old_price
+            ? `<span class="old-price">$${Number(item.old_price).toFixed(2)}</span>`
+            : '';
+
+          let discountBadge = '';
+
+          if (item.old_price && item.old_price > item.price) {
+            const discount = Math.round(
+              ((item.old_price - item.price) / item.old_price) * 100
+            );
+
+            discountBadge = `
+              <span class="discount-badge">
+                ${discount}% OFF
+              </span>
+            `;
+          }
+
+          const card = document.createElement('div');
+          card.className = 'col-md-6';
+          card.setAttribute('data-wishlist-item', item.id);
+
+          card.innerHTML = `
+            <div class="wishlist-card">
+
+              <div class="wishlist-image-wrapper">
+
+                <img
+                  src="${item.image}"
+                  class="wishlist-image"
+                  alt="${item.name}"
+                >
+
+                <button
+                  type="button"
+                  class="remove-wishlist"
+                  onclick="removeWishlistItem(${item.id})"
+                  aria-label="Remove from wishlist"
+                >
+                  <i class="bi bi-x-lg"></i>
+                </button>
+
+              </div>
+
+              <div class="wishlist-card-body">
+
+                <div class="product-category">
+                  ${item.category_name || item.category}
+                </div>
+
+                <h5 class="product-title">
+                  ${item.product_name}
+                </h5>
+
+                <div class="mb-3">
+
+                  <span class="product-price">
+                    $${Number(item.price).toFixed(2)}
+                  </span>
+
+                  ${oldPrice}
+                  ${discountBadge}
+
+                </div>
+
+                <button
+                  type="button"
+                  class="btn btn-orange w-100"
+                  onclick="addWishlistProductToCart(${item.product_id})"
+                >
+                  <i class="bi bi-cart-plus me-2"></i>
+                  Add to Cart
+                </button>
+
+              </div>
+
+            </div>
+          `;
+
+          container.appendChild(card);
+
+        });
+
+      } catch (error) {
+        console.error('Wishlist loading error:', error);
+      }
+
+    }
+
+
+    /* =========================
+       REMOVE WISHLIST ITEM
+    ========================== */
+
+    async function removeWishlistItem(wishlistId) {
+
+      const user = JSON.parse(
+        localStorage.getItem('apexmart_user')
+      );
+
+      if (!user || !user.id) {
+        alert('Please login before modifying your wishlist.');
+        return;
+      }
+
+      try {
+
+        const response = await fetch(
+          `http://127.0.0.1:8000/customer/wishlist/${user.id}/${wishlistId}`,
+          {
+            method: 'DELETE'
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error('Failed to remove wishlist item.');
+        }
+
+        loadWishlist();
+
+      } catch (error) {
+        console.error('Remove wishlist error:', error);
+      }
+
+    }
+
+
+    /* =========================
+       ADD WISHLIST PRODUCT TO CART
+       EXISTING CART FUNCTION
+    ========================== */
+
+    function addWishlistProductToCart(productId) {
+
+      let cart =
+        JSON.parse(
+          localStorage.getItem('apexmart_cart')
+        ) || [];
+
+      const product =
+        productsData.find(
+          product => product.id === productId
+        );
+
+      if (!product) {
+        alert('Product could not be found.');
+        return;
+      }
+
+      const existingItem =
+        cart.find(
+          item => item.id === productId
+        );
+
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+          quantity: 1
+        });
+      }
+
+      localStorage.setItem(
+        'apexmart_cart',
+        JSON.stringify(cart)
+      );
+
+      window.location.href =
+        '../main/index.html';
+
+    }
+
+
+    /* =========================
+       INITIAL LOAD
+    ========================== */
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      function () {
+        loadWishlist();
+      }
+    );
+
+  </script>
+
+
+</body>
+
+</html>
