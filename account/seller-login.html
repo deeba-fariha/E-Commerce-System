@@ -1,0 +1,174 @@
+
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ApexMart - Login</title>
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff5e00'><path d='M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z'/></svg>">
+
+        <!-- Bootstrap 5.3 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+    <body>
+        <div class="modal fade custom-modal" id="authModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+
+                <h5 class="fw-bold mb-0"><i class="bi bi-shop text-warning me-2"></i>Seller Login</h5>
+
+
+                <a href="../main/index.html" class="btn-close" aria-label="Close"></a>
+
+            </div>
+
+
+
+            <div class="modal-body p-4">
+                <form onsubmit="event.preventDefault(); handleSellerLogin();">
+
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Email Address</label>
+                    <input type="email" id="loginEmail" class="form-control form-control-custom" placeholder="you@domain.com" required>
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between">
+                    <label class="form-label small fw-bold">Password</label>
+                    <a href="#" class="small text-warning text-decoration-none">
+                        Forgot password?
+                    </a>
+                </div>
+
+                    <div class="input-group">
+                    <input type="password"
+                            name="password"
+                            id="loginPassword"
+                            class="form-control form-control-custom"
+                            placeholder="Enter password"
+                            required>
+
+                    <button type="button"
+                            class="btn btn-outline-secondary"
+                            onclick="togglePassword('loginPassword', 'loginPasswordIcon')">
+                        <i class="bi bi-eye" id="loginPasswordIcon"></i>
+                    </button>
+                    </div>
+
+                </div>
+
+                <!-- Remember -->
+                <div class="form-check mb-3">
+                    <input class="form-check-input"
+                        type="checkbox"
+                        id="rememberMe"
+                        checked>
+                    <label class="form-check-label small" for="rememberMe">
+                    Remember my device
+                    </label>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-orange w-100 py-2">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    Sign In to Seller Dashboard
+                </button>
+
+                <div class="text-center mt-3">
+                    <span class="small text-muted">Want to register as a seller?</span>
+                    <a href="seller_form.html" class="small text-warning fw-bold text-decoration-none ms-1">
+                        Apply here
+                    </a>
+                </div>
+            </form>
+
+            </div>
+            </div>
+        </div>
+        </div>
+
+        <script>
+
+        function togglePassword(passwordId, iconId) {
+            const password = document.getElementById(passwordId);
+            const icon = document.getElementById(iconId);
+            if (password.type === "password") {
+                password.type = "text";
+                icon.classList.remove("bi-eye");
+                icon.classList.add("bi-eye-slash");
+                }
+
+                else {
+                password.type = "password";
+                icon.classList.remove("bi-eye-slash");
+                icon.classList.add("bi-eye");
+                }
+            }
+
+            async function handleSellerLogin() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/sellers/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.detail || "Wrong email or password.");
+            return;
+        }
+
+        // Login successful
+        localStorage.setItem("seller_id", data.seller_id);
+        localStorage.setItem("seller_email", data.email);
+
+        window.location.href = "../seller/seller-dashboard.html";
+
+    } catch (error) {
+        console.error("Login error:", error);
+        alert("Cannot connect to the server. Please make sure FastAPI is running.");
+    }
+    }
+        </script>
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../js/app.js"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const authModal = document.getElementById('authModal');
+
+                if (authModal) {
+                    bootstrap.Modal.getOrCreateInstance(authModal).show();
+                }
+            });
+        </script>
+
+    </body>
+    </html>
+
