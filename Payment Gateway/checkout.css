@@ -74,7 +74,7 @@ input{font-family:inherit;}
 .step.active .step-label,.step.done .step-label{color:var(--text);}
 
 /* ---------- LAYOUT ---------- */
-.layout{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;}
+.layout{display:block;}
 
 .panel{
   background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
@@ -183,7 +183,8 @@ input{font-family:inherit;}
 .card-value{display:block;font-size:12.5px;font-weight:600;letter-spacing:.5px;}
 
 /* ---------- RESULT PANELS (steps 4 & 5) ---------- */
-.center-panel{text-align:center;display:flex;flex-direction:column;align-items:center;}
+.center-panel{text-align:center;flex-direction:column;align-items:center;}
+.step-panel.center-panel.active{display:flex;}
 .result-icon{
   width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   margin-bottom:18px;

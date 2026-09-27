@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checkout — Apex Mart</title>
+<title>Payment — Apex Mart</title>
 <link rel="stylesheet" href="checkout.css">
 <script src="https://js.stripe.com/v3/"></script>
 </head>
@@ -18,7 +18,7 @@
     </div>
     <div class="secure-note">
       <svg viewBox="0 0 20 20"><path d="M10 2.5 4 5v4.5c0 4 2.6 6.9 6 8 3.4-1.1 6-4 6-8V5l-6-2.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      Secure checkout
+      Secure payment
     </div>
   </header>
 
@@ -27,22 +27,18 @@
     <ol class="tracker" id="tracker">
       <li class="step active" data-step="1">
         <span class="step-dot">1</span>
-        <span class="step-label">Checkout</span>
+        <span class="step-label">Payment method</span>
       </li>
       <li class="step" data-step="2">
         <span class="step-dot">2</span>
-        <span class="step-label">Payment method</span>
+        <span class="step-label">Card payment</span>
       </li>
       <li class="step" data-step="3">
         <span class="step-dot">3</span>
-        <span class="step-label">Card payment</span>
+        <span class="step-label">Payment successful</span>
       </li>
       <li class="step" data-step="4">
         <span class="step-dot">4</span>
-        <span class="step-label">Payment successful</span>
-      </li>
-      <li class="step" data-step="5">
-        <span class="step-dot">5</span>
         <span class="step-label">Order confirmed</span>
       </li>
     </ol>
@@ -53,33 +49,9 @@
     <!-- LEFT: STEP CONTENT -->
     <div class="stage">
 
-      <!-- STEP 1: CHECKOUT (cart + shipping) -->
+
+      <!-- STEP 1: PAYMENT METHOD -->
       <section class="panel step-panel active" id="panel-1">
-        <h1 class="panel-title">Review your order</h1>
-        <p class="panel-sub">Confirm what's in your cart, then tell us where it's going.</p>
-
-        <div class="cart-list" id="cartList"></div>
-
-        <div class="promo-row">
-          <input type="text" id="promoInput" placeholder="Discount code">
-          <button class="btn ghost" id="applyPromo">Apply</button>
-        </div>
-        <p class="promo-msg" id="promoMsg"></p>
-
-        <h2 class="section-heading">Shipping details</h2>
-        <div class="form-grid">
-          <label>Full name<input type="text" id="shipName" placeholder="Farhana Islam"></label>
-          <label>Phone number<input type="tel" id="shipPhone" placeholder="01XXXXXXXXX"></label>
-          <label class="span-2">Address<input type="text" id="shipAddress" placeholder="House, road, area"></label>
-          <label>City<input type="text" id="shipCity" placeholder="Dhaka"></label>
-          <label>Postal code<input type="text" id="shipZip" placeholder="1212"></label>
-        </div>
-
-        <button class="btn primary full" id="toStep2">Continue to payment</button>
-      </section>
-
-      <!-- STEP 2: PAYMENT METHOD -->
-      <section class="panel step-panel" id="panel-2">
         <h1 class="panel-title">Choose a payment method</h1>
         <p class="panel-sub">Pick how you'd like to pay for this order.</p>
 
@@ -130,13 +102,12 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn ghost" id="backTo1">Back</button>
-          <button class="btn primary" id="toStep3">Continue</button>
+          <button class="btn primary full" id="toStep2">Continue</button>
         </div>
       </section>
 
-      <!-- STEP 3: CARD PAYMENT -->
-      <section class="panel step-panel" id="panel-3">
+      <!-- STEP 2: CARD PAYMENT -->
+      <section class="panel step-panel" id="panel-2">
         <h1 class="panel-title">Enter card details</h1>
         <p class="panel-sub">Your card information is encrypted and never stored on our servers.</p>
 
@@ -176,15 +147,15 @@
         </div>
 
         <div class="step-actions">
-          <button class="btn ghost" id="backTo2">Back</button>
+          <button class="btn ghost" id="backTo1">Back</button>
           <button class="btn primary" id="payNowBtn">
             <span id="payBtnLabel">Pay <span id="payAmount"></span></span>
           </button>
         </div>
       </section>
 
-      <!-- STEP 4: PAYMENT SUCCESSFUL -->
-      <section class="panel step-panel center-panel" id="panel-4">
+      <!-- STEP 3: PAYMENT SUCCESSFUL -->
+      <section class="panel step-panel center-panel" id="panel-3">
         <div class="result-icon success">
           <svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" fill="none" stroke="currentColor" stroke-width="2.5"/><path class="check-path" d="M15 27l7 7 15-15" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
@@ -197,11 +168,14 @@
           <div class="receipt-row"><span>Date</span><span id="txnDate">—</span></div>
         </div>
 
-        <button class="btn primary full" id="toStep5">View order confirmation</button>
+        <div class="step-actions">
+          <button class="btn ghost" id="backTo2">Back</button>
+          <button class="btn primary" id="toStep4">View order confirmation</button>
+        </div>
       </section>
 
-      <!-- STEP 5: ORDER CONFIRMED -->
-      <section class="panel step-panel center-panel" id="panel-5">
+      <!-- STEP 4: ORDER CONFIRMED -->
+      <section class="panel step-panel center-panel" id="panel-4">
         <div class="result-icon confirmed">
           <svg viewBox="0 0 20 20"><path d="M4 3h9l3 3v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9h6M7 12.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
         </div>
@@ -209,29 +183,19 @@
         <p class="panel-sub center">Order <strong id="orderNumber">—</strong> is being prepared. We've sent a confirmation to your phone.</p>
 
         <div class="receipt">
-          <div class="receipt-row"><span>Delivery to</span><span id="confirmName">—</span></div>
-          <div class="receipt-row"><span>Address</span><span id="confirmAddress">—</span></div>
           <div class="receipt-row"><span>Estimated delivery</span><span id="confirmEta">—</span></div>
           <div class="receipt-row total"><span>Total paid</span><span id="confirmTotal">—</span></div>
         </div>
 
         <div class="step-actions center">
-          <button class="btn ghost" id="trackOrderBtn">Track order</button>
+          
+          
           <button class="btn primary" id="newOrderBtn">Continue shopping</button>
         </div>
       </section>
 
     </div>
 
-    <!-- RIGHT: ORDER SUMMARY (persistent) -->
-    <aside class="summary" id="summary">
-      <h2 class="summary-title">Order summary</h2>
-      <div class="summary-list" id="summaryList"></div>
-      <div class="summary-line"><span>Subtotal</span><span id="sumSubtotal"></span></div>
-      <div class="summary-line"><span>Shipping</span><span id="sumShipping"></span></div>
-      <div class="summary-line discount-line" id="discountLine" hidden><span>Discount</span><span id="sumDiscount"></span></div>
-      <div class="summary-line total"><span>Total</span><span id="sumTotal"></span></div>
-    </aside>
 
   </main>
 </div>
