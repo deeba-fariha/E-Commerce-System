@@ -1108,6 +1108,15 @@
             `;
           }
 
+          const imageUrl = item.image
+          ? (
+              item.image.startsWith('http://') ||
+              item.image.startsWith('https://')
+                ? item.image
+                : `http://127.0.0.1:8000${item.image}`
+            )
+          : 'https://placehold.co/600x400?text=No+Image';
+
           const card = document.createElement('div');
           card.className = 'col-md-6';
           card.setAttribute('data-wishlist-item', item.id);
@@ -1118,9 +1127,9 @@
               <div class="wishlist-image-wrapper">
 
                 <img
-                  src="${item.image}"
-                  class="wishlist-image"
-                  alt="${item.name}"
+                    src="${imageUrl}"
+                    class="wishlist-image"
+                    alt="${item.product_name || item.name || 'Product'}"
                 >
 
                 <button
