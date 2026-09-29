@@ -1,0 +1,59 @@
+# ==============================
+# Python Core & Artifacts
+# ==============================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==============================
+# Virtual Environments
+# ==============================
+venv/
+env/
+backend/venv/
+
+# ==============================
+# Environment Variables & Secrets
+# ==============================
+.env
+.env.local
+.env.*.local
+backend/.env
+
+# Explicitly track example environment files
+!.env.example
+
+# ==============================
+# Testing & Code Quality
+# ==============================
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ==============================
+# IDEs & Editors
+# ==============================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==============================
+# Operating System
+# ==============================
+.DS_Store
+Thumbs.db
+# Uploaded files
+backend/uploads/
