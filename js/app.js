@@ -27,11 +27,16 @@ const cartTotalText = document.getElementById('cartTotalText');
 const wishlistCount = document.getElementById('wishlistCount');
 
 // Initialize Application
-document.addEventListener('DOMContentLoaded', () => {
-  initEventListeners();
-  updateCartUI();
-  updateWishlistUI();
-  filterAndRenderProducts();
+document.addEventListener('DOMContentLoaded', async () => {
+
+    initEventListeners();
+
+    updateCartUI();
+
+    updateWishlistUI();
+
+    await loadProductsFromAPI();
+
 });
 
 // Event Listeners Initialization
@@ -187,7 +192,7 @@ function renderProducts(products) {
           <div class="product-top-bar">
             <span class="product-badge ${badgeClass}">${product.badge}</span>
             <button class="btn-wishlist ${isWishlisted ? 'active' : ''}" 
-                    onclick="toggleWishlist(${product.id})" 
+                    onclick="toggleWishlist('${product.id}')"
                     title="${isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}">
               <i class="bi ${isWishlisted ? 'bi-heart-fill' : 'bi-heart'}"></i>
             </button>
@@ -197,7 +202,7 @@ function renderProducts(products) {
           <div class="product-thumb-wrap">
             <img src="${product.image}" alt="${product.name}" loading="lazy">
             <div class="quick-view-overlay">
-              <button class="btn-quick-view" onclick="openQuickView(${product.id})">
+              <button class="btn-quick-view" onclick="openQuickView('${product.id}')">
                 <i class="bi bi-eye"></i> Quick View
               </button>
             </div>
@@ -214,14 +219,14 @@ function renderProducts(products) {
             </div>
 
             <div class="product-pricing">
-              <span class="product-price">$${product.price.toFixed(2)}</span>
-              ${product.oldPrice ? `<span class="product-old-price">$${product.oldPrice.toFixed(2)}</span>` : ''}
+              <span class="product-price">$${Number(product.price).toFixed(2)}</span>
+              ${product.oldPrice ? `<span class="product-old-price">$${Number(product.oldPrice).toFixed(2)}</span>` : ''}
             </div>
 
-            <button class="btn-add-cart" onclick="addToCart(${product.id}, 1)">
+            <button class="btn-add-cart" onclick="addToCart('${product.id}', 1)">
               <i class="bi bi-cart-plus"></i> Add to Cart
             </button>
-            <a href="product.html?id=${product.id}" class="btn-add-cart" style="text-decoration:none;">
+            <a href="product.html?id=${encodeURIComponent(product.id)}" class="btn-add-cart" style="text-decoration:none;">
               <i class="bi bi-eye"></i> View Product
             </a>
           </div>
@@ -272,27 +277,70 @@ function filterByCategory(cat) {
 //  =
 
 function addToCart(productId, quantity = 1) {
-  const product = productsData.find(p => p.id === productId);
-  if (!product) return;
 
-  const existingItemIndex = cart.findIndex(item => item.id === productId);
 
-  if (existingItemIndex > -1) {
-    cart[existingItemIndex].quantity += quantity;
-  } else {
-    cart.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: quantity
-    });
-  }
+    const product = productsData.find(
+        p => Number(p.id) === Number(productId)
+    );
 
-  saveCart();
-  updateCartUI();
-  showToast(`Added <strong>${product.name}</strong> to your cart!`);
-  openCartOffcanvas();
+
+    if (!product) {
+
+        console.error(
+            "Product not found:",
+            productId,
+            productsData
+        );
+
+        return;
+
+    }
+
+
+
+    const existingItemIndex = cart.findIndex(
+        item => Number(item.id) === Number(productId)
+    );
+
+
+
+    if (existingItemIndex > -1) {
+
+
+        cart[existingItemIndex].quantity += quantity;
+
+
+    } else {
+
+
+        cart.push({
+
+            id: product.id,
+
+            name: product.name,
+
+            price: Number(product.price),
+
+            image: product.image,
+
+            quantity: quantity
+
+        });
+
+    }
+
+
+
+    saveCart();
+
+    updateCartUI();
+
+    showToast(
+        `Added <strong>${product.name}</strong> to your cart!`
+    );
+
+    openCartOffcanvas();
+
 }
 
 function updateCartQuantity(productId, delta) {
@@ -361,7 +409,7 @@ function updateCartUI() {
       <img src="${item.image}" alt="${item.name}" class="cart-item-img">
       <div class="flex-grow-1 min-w-0">
         <h6 class="cart-item-title text-truncate" title="${item.name}">${item.name}</h6>
-        <div class="cart-item-price mb-2">$${item.price.toFixed(2)}</div>
+        <div class="cart-item-price mb-2">$${Number(item.price).toFixed(2)}</div>
         
         <div class="d-flex align-items-center justify-content-between">
           <div class="qty-control">
@@ -399,20 +447,52 @@ function handleCheckout() {
 //  =
 
 function toggleWishlist(productId) {
-  const index = wishlist.indexOf(productId);
-  const product = productsData.find(p => p.id === productId);
 
-  if (index > -1) {
-    wishlist.splice(index, 1);
-    showToast(`Removed from wishlist`);
-  } else {
-    wishlist.push(productId);
-    showToast(`Added <strong>${product ? product.name : 'item'}</strong> to wishlist!`);
-  }
+    productId = Number(productId);
 
-  localStorage.setItem('apexmart_wishlist', JSON.stringify(wishlist));
-  updateWishlistUI();
-  filterAndRenderProducts();
+
+    const index = wishlist.findIndex(
+        id => Number(id) === productId
+    );
+
+
+    const product = productsData.find(
+        p => Number(p.id) === productId
+    );
+
+
+    if (index > -1) {
+
+        wishlist.splice(index, 1);
+
+        showToast(
+            "Removed from wishlist"
+        );
+
+
+    } else {
+
+
+        wishlist.push(productId);
+
+
+        showToast(
+            `Added <strong>${product ? product.name : 'item'}</strong> to wishlist!`
+        );
+
+    }
+
+
+    localStorage.setItem(
+        'apexmart_wishlist',
+        JSON.stringify(wishlist)
+    );
+
+
+    updateWishlistUI();
+
+    filterAndRenderProducts();
+
 }
 
 function updateWishlistUI() {
@@ -425,68 +505,289 @@ function updateWishlistUI() {
 // Quick View Modal
 //  =
 
-function openQuickView(productId) {
-  const product = productsData.find(p => p.id === productId);
-  if (!product) return;
+async function openQuickView(productId) {
 
-  const quickViewContent = document.getElementById('quickViewContent');
-  if (!quickViewContent) return;
+    try {
 
-  quickViewContent.innerHTML = `
-    <div class="row g-4 align-items-center">
-      <div class="col-md-6 text-center">
-        <div class="border rounded-3 p-3 bg-white">
-          <img src="${product.image}" alt="${product.name}" class="img-fluid rounded-2" style="max-height: 320px; object-fit: contain;">
+        const realProductId = String(productId).replace("db_", "");
+
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/products/${realProductId}`
+        );
+
+
+        if (!response.ok) {
+            throw new Error("Product not found");
+        }
+
+
+        const product = await response.json();
+
+
+        const quickViewContent =
+            document.getElementById('quickViewContent');
+
+
+        if (!quickViewContent) return;
+
+
+
+        const formattedProduct = {
+
+            id: product.id,
+
+            name: product.name,
+
+            categoryName:
+                product.category_name ||
+                product.category,
+
+
+            price:
+                Number(product.price),
+
+
+            oldPrice:
+                product.oldPrice
+                ? Number(product.oldPrice)
+                : null,
+
+
+            rating:
+                Number(product.rating || 0),
+
+
+            reviewsCount:
+                product.reviews_count || 0,
+
+
+            image:
+                product.image.startsWith("http")
+                ? product.image
+                : "http://127.0.0.1:8000" + product.image,
+
+
+            description:
+                product.description
+
+        };
+
+
+
+        quickViewContent.innerHTML = `
+
+        <div class="row g-4 align-items-center">
+
+
+            <div class="col-md-6 text-center">
+
+                <div class="border rounded-3 p-3 bg-white">
+
+                    <img 
+                    src="${formattedProduct.image}" 
+                    alt="${formattedProduct.name}" 
+                    class="img-fluid rounded-2"
+                    style="max-height:320px; object-fit:contain;">
+
+                </div>
+
+            </div>
+
+
+
+            <div class="col-md-6">
+
+
+                <span class="badge bg-warning text-dark mb-2">
+                    ${formattedProduct.categoryName}
+                </span>
+
+
+
+                <h4 class="fw-bold text-dark mb-2">
+                    ${formattedProduct.name}
+                </h4>
+
+
+
+                <div class="rating-stars mb-3">
+
+                    <span class="stars-list">
+                        ${generateStarsHtml(formattedProduct.rating)}
+                    </span>
+
+                    <span class="reviews-count">
+                        (${formattedProduct.reviewsCount} customer reviews)
+                    </span>
+
+                </div>
+
+
+
+
+                <div class="d-flex align-items-baseline gap-2 mb-3">
+
+
+                    <span 
+                    class="fs-3 fw-bold text-warning"
+                    style="color:var(--primary-orange)!important;">
+
+                        $${formattedProduct.price.toFixed(2)}
+
+                    </span>
+
+
+                    ${
+                        formattedProduct.oldPrice
+                        ?
+                        `<span class="text-muted text-decoration-line-through fs-6">
+                            $${formattedProduct.oldPrice.toFixed(2)}
+                         </span>`
+                        :
+                        ''
+                    }
+
+
+                    <span class="badge bg-success ms-2">
+                        In Stock
+                    </span>
+
+
+                </div>
+
+
+
+
+                <p class="text-secondary small mb-4">
+                    ${formattedProduct.description}
+                </p>
+
+
+
+
+                <div class="d-flex align-items-center gap-3 mb-4">
+
+
+                    <label class="small fw-bold">
+                        Quantity:
+                    </label>
+
+
+                    <div class="qty-control">
+
+
+                        <button 
+                        class="qty-btn"
+                        type="button"
+                        onclick="
+                        const q=document.getElementById('quickViewQty');
+                        if(parseInt(q.value)>1)
+                        q.value=parseInt(q.value)-1;">
+                        -
+                        </button>
+
+
+
+                        <input 
+                        type="number"
+                        id="quickViewQty"
+                        value="1"
+                        min="1"
+                        max="99"
+                        class="qty-val border-0"
+                        style="outline:none;">
+
+
+
+                        <button 
+                        class="qty-btn"
+                        type="button"
+                        onclick="
+                        const q=document.getElementById('quickViewQty');
+                        q.value=parseInt(q.value)+1;">
+                        +
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+
+
+                <div class="d-flex gap-2">
+
+
+                    <button 
+                    class="btn btn-orange flex-grow-1 py-2"
+                    onclick="
+                    const qty=parseInt(document.getElementById('quickViewQty').value)||1;
+                    addToCart(${formattedProduct.id}, qty);
+                    bootstrap.Modal.getInstance(document.getElementById('quickViewModal'))?.hide();
+                    openCartOffcanvas();
+                    ">
+
+
+                        <i class="bi bi-cart-check-fill"></i>
+                        Add to Cart & Checkout
+
+
+                    </button>
+
+
+
+
+                    <button 
+                    class="btn btn-outline-secondary"
+                    onclick="toggleWishlist(${formattedProduct.id})">
+
+
+                        <i class="bi bi-heart"></i>
+
+
+                    </button>
+
+
+                </div>
+
+
+            </div>
+
+
         </div>
-      </div>
-      <div class="col-md-6">
-        <span class="badge bg-warning text-dark mb-2">${product.categoryName}</span>
-        <h4 class="fw-bold text-dark mb-2">${product.name}</h4>
-        
-        <div class="rating-stars mb-3">
-          <span class="stars-list">${generateStarsHtml(product.rating)}</span>
-          <span class="reviews-count">(${product.reviewsCount} customer reviews)</span>
-        </div>
 
-        <div class="d-flex align-items-baseline gap-2 mb-3">
-          <span class="fs-3 fw-bold text-warning" style="color: var(--primary-orange) !important;">$${product.price.toFixed(2)}</span>
-          ${product.oldPrice ? `<span class="text-muted text-decoration-line-through fs-6">$${product.oldPrice.toFixed(2)}</span>` : ''}
-          <span class="badge bg-success ms-2">In Stock</span>
-        </div>
+        `;
 
-        <p class="text-secondary small mb-4">${product.description}</p>
 
-        <div class="d-flex align-items-center gap-3 mb-4">
-          <label class="small fw-bold">Quantity:</label>
-          <div class="qty-control">
-            <button class="qty-btn" type="button" onclick="const q = document.getElementById('quickViewQty'); if(parseInt(q.value) > 1) q.value = parseInt(q.value) - 1;">-</button>
-            <input type="number" id="quickViewQty" value="1" min="1" max="99" class="qty-val border-0" style="outline: none;">
-            <button class="qty-btn" type="button" onclick="const q = document.getElementById('quickViewQty'); q.value = parseInt(q.value) + 1;">+</button>
-          </div>
-        </div>
 
-        <div class="d-flex gap-2">
-          <button class="btn btn-orange flex-grow-1 py-2" onclick="
-            const qty = parseInt(document.getElementById('quickViewQty').value) || 1;
-            addToCart(${product.id}, qty);
-            bootstrap.Modal.getInstance(document.getElementById('quickViewModal'))?.hide();
-            openCartOffcanvas();
-          ">
-            <i class="bi bi-cart-check-fill"></i> Add to Cart & Checkout
-          </button>
-          <button class="btn btn-outline-secondary" onclick="toggleWishlist(${product.id})">
-            <i class="bi bi-heart"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
+        const modalEl =
+            document.getElementById('quickViewModal');
 
-  const modalEl = document.getElementById('quickViewModal');
-  const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
-  bsModal.show();
+
+        const bsModal =
+            bootstrap.Modal.getOrCreateInstance(modalEl);
+
+
+        bsModal.show();
+
+
+
+    } catch(error) {
+
+
+        console.error(
+            "Quick View Error:",
+            error
+        );
+
+
+    }
+
 }
-
 //  =
 // Auth & Seller Submissions
 //  =
