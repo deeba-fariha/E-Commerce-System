@@ -145,6 +145,11 @@
         localStorage.setItem("seller_id", data.seller_id);
         localStorage.setItem("seller_email", data.email);
 
+        localStorage.setItem(
+            "apexmart_role",
+            "seller"
+        );
+
         window.location.href = "../seller/seller-dashboard.html";
 
     } catch (error) {
