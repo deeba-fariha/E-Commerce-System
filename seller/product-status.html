@@ -329,22 +329,31 @@ function createProductRow(product) {
     }
 
 
-    const image = product.image
-        ? `
-            <img
-                src="${escapeHtml(product.image)}"
-                alt="${escapeHtml(product.name)}"
-                width="50"
-                height="50"
-                style="
-                    object-fit: contain;
-                    border-radius: 8px;
-                    margin-right: 10px;
-                "
-                onerror="this.style.display='none';"
-            >
-        `
-        : "";
+    const imageUrl = product.image
+    ? (
+        product.image.startsWith("http")
+            ? product.image
+            : "http://127.0.0.1:8000" + product.image
+      )
+    : "";
+
+
+const image = imageUrl
+    ? `
+        <img
+            src="${escapeHtml(imageUrl)}"
+            alt="${escapeHtml(product.name)}"
+            width="50"
+            height="50"
+            style="
+                object-fit: contain;
+                border-radius: 8px;
+                margin-right: 10px;
+            "
+            onerror="this.style.display='none';"
+        >
+      `
+    : "";
 
 
     return `

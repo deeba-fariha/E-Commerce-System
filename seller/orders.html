@@ -1,63 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Orders - ApexMart</title>
+    <title>Orders - ApexMart</title>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<link rel="stylesheet" href="../css/style.css">
-<link rel="stylesheet" href="../css/dashboard.css">
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../css/dashboard.css"
+    >
 
 </head>
 
+
 <body>
-<div id="sellerPage" data-page="orders">
+
+
+<div
+    id="sellerPage"
+    data-page="orders"
+>
 
     <section class="dashboard-view-pane active">
 
+
         <!-- Customer Orders -->
+
         <div class="dash-card mb-4">
 
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div
+                class="d-flex justify-content-between align-items-center mb-3"
+            >
 
                 <div>
-                    <h4 class="fw-bold text-dark mb-1">
+
+                    <h4
+                        class="fw-bold text-dark mb-1"
+                    >
                         Customer Orders
                     </h4>
 
-                    <p class="small text-muted mb-0">
+                    <p
+                        class="small text-muted mb-0"
+                    >
                         Orders placed by customers for your store inventory.
                     </p>
+
                 </div>
 
-                <span class="badge bg-success px-3 py-2">
+
+                <span
+                    class="badge bg-success px-3 py-2"
+                >
                     Escrow Secured
                 </span>
 
             </div>
 
-            <div class="dash-table-wrap table-responsive">
+
+            <div
+                class="dash-table-wrap table-responsive"
+            >
 
                 <table class="dash-table">
 
                     <thead>
 
                         <tr>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Product Ordered</th>
-                            <th>Quantity</th>
-                            <th>Total Amount</th>
-                            <th>Date</th>
-                            <th>Status</th>
+
+                            <th>
+                                Order ID
+                            </th>
+
+                            <th>
+                                Customer
+                            </th>
+
+                            <th>
+                                Product Ordered
+                            </th>
+
+                            <th>
+                                Quantity
+                            </th>
+
+                            <th>
+                                Total Amount
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
                         </tr>
 
                     </thead>
 
-                    <tbody id="ordersTableBody">
+
+                    <tbody
+                        id="ordersTableBody"
+                    >
                     </tbody>
 
                 </table>
@@ -66,43 +129,502 @@
 
         </div>
 
+
+
         <!-- Customer Reviews -->
+
         <div class="dash-card">
 
-            <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
-                <div>
-                    <h4 class="fw-bold text-dark mb-1">Customer Reviews & Ratings</h4>
+            <div
+                class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom"
+            >
 
-                    <p class="small text-muted mb-0">
+                <div>
+
+                    <h4
+                        class="fw-bold text-dark mb-1"
+                    >
+                        Customer Reviews & Ratings
+                    </h4>
+
+                    <p
+                        class="small text-muted mb-0"
+                    >
                         Verified purchaser reviews for your store.
                     </p>
+
                 </div>
 
-                <strong class="fs-5 text-dark">
 
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <span id="reviewsAverageRating">4.88</span>
+                <strong
+                    class="fs-5 text-dark"
+                >
+
+                    <i
+                        class="bi bi-star-fill text-warning"
+                    ></i>
+
+                    <span
+                        id="reviewsAverageRating"
+                    >
+                        4.88
+                    </span>
 
                 </strong>
 
             </div>
 
-            <div id="reviewsListContainer"></div>
+
+            <div
+                id="reviewsListContainer"
+            >
+            </div>
 
         </div>
+
 
     </section>
 
 </div>
 
+
+
 <!-- Bootstrap JS -->
+
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 ></script>
 
+
+
 <!-- Seller JavaScript -->
-<script src="../js/seller-layout.js"></script>
-<script src="../js/seller-dashboard.js"></script>
+
+<script
+    src="../js/seller-layout.js"
+></script>
+
+<script
+    src="../js/seller-dashboard.js"
+></script>
+
+
+
+<!-- =========================================
+     SELLER ORDERS FROM DATABASE
+========================================= -->
+
+<script>
+
+
+    async function loadSellerOrdersFromDB() {
+
+
+        const tbody =
+            document.getElementById(
+                "ordersTableBody"
+            );
+
+
+        if (!tbody) {
+            return;
+        }
+
+
+
+        const sellerId =
+            Number(
+                localStorage.getItem(
+                    "seller_id"
+                )
+            );
+
+
+
+        if (!sellerId) {
+
+
+            tbody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center py-4 text-danger"
+                    >
+
+                        Seller ID not found.
+                        Please login again.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+
+            return;
+
+        }
+
+
+
+        tbody.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    class="text-center py-4 text-muted"
+                >
+
+                    <div
+                        class="spinner-border spinner-border-sm me-2"
+                    ></div>
+
+                    Loading orders...
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+
+        try {
+
+
+            const response =
+                await fetch(
+
+                    `http://127.0.0.1:8000/customer/seller-orders/${sellerId}`
+
+                );
+
+
+
+            if (!response.ok) {
+
+
+                throw new Error(
+                    "Failed to load seller orders."
+                );
+
+            }
+
+
+
+            const orders =
+                await response.json();
+
+
+
+            if (
+                !Array.isArray(orders) ||
+                orders.length === 0
+            ) {
+
+
+                tbody.innerHTML = `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="text-center py-4 text-muted"
+                        >
+
+                            No customer orders found.
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+                return;
+
+            }
+
+
+
+            tbody.innerHTML =
+                orders.map(
+                    order => {
+
+
+                        const status =
+                            String(
+                                order.status ||
+                                "Pending"
+                            );
+
+
+                        const statusLower =
+                            status.toLowerCase();
+
+
+                        let statusClass =
+                            "bg-secondary";
+
+
+                        if (
+                            statusLower ===
+                            "pending"
+                        ) {
+
+                            statusClass =
+                                "bg-warning text-dark";
+
+                        }
+
+
+                        else if (
+                            statusLower ===
+                            "processing"
+                        ) {
+
+                            statusClass =
+                                "bg-primary";
+
+                        }
+
+
+                        else if (
+                            statusLower ===
+                            "shipped" ||
+                            statusLower ===
+                            "shipping"
+                        ) {
+
+                            statusClass =
+                                "bg-info text-dark";
+
+                        }
+
+
+                        else if (
+                            statusLower ===
+                            "delivered"
+                        ) {
+
+                            statusClass =
+                                "bg-success";
+
+                        }
+
+
+                        else if (
+                            statusLower ===
+                            "cancelled" ||
+                            statusLower ===
+                            "canceled"
+                        ) {
+
+                            statusClass =
+                                "bg-danger";
+
+                        }
+
+
+
+                        const total =
+                            Number(
+                                order.total_amount ||
+                                0
+                            ).toFixed(2);
+
+
+
+                        return `
+
+                            <tr>
+
+
+                                <td>
+
+                                    ${escapeOrderHtml(
+                                        order.order_number ||
+                                        order.order_id
+                                    )}
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <strong>
+
+                                        ${escapeOrderHtml(
+                                            order.customer_name ||
+                                            "Customer"
+                                        )}
+
+                                    </strong>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    ${escapeOrderHtml(
+                                        order.product_name ||
+                                        "Product"
+                                    )}
+
+                                </td>
+
+
+
+                                <td>
+
+                                    ${Number(
+                                        order.quantity ||
+                                        0
+                                    )}
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <strong>
+
+                                        $${total}
+
+                                    </strong>
+
+                                </td>
+
+
+
+                                <td>
+
+                                    -
+
+                                </td>
+
+
+
+                                <td>
+
+                                    <span
+                                        class="badge ${statusClass}"
+                                    >
+
+                                        ${escapeOrderHtml(
+                                            status
+                                        )}
+
+                                    </span>
+
+                                </td>
+
+
+                            </tr>
+
+                        `;
+
+                    }
+
+                ).join("");
+
+
+        }
+
+
+        catch (error) {
+
+
+            console.error(
+                "Seller order loading error:",
+                error
+            );
+
+
+            tbody.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center py-4 text-danger"
+                    >
+
+                        Could not load orders
+                        from database.
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+
+
+    function escapeOrderHtml(
+        value
+    ) {
+
+
+        return String(
+            value ?? ""
+        )
+
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        loadSellerOrdersFromDB
+    );
+
+
+</script>
+
+
 
 </body>
+
 </html>
