@@ -1,183 +1,118 @@
 // Product Catalog Data
-const productsData = [
-  {
-    id: 1,
-    name: "Sony WH-1000XM5 Wireless Noise-Cancelling Headphones",
-    category: "audio",
-    categoryName: "Audio & Sound",
-    price: 349.99,
-    oldPrice: 399.99,
-    rating: 4.9,
-    reviewsCount: 1248,
-    badge: "Best Seller",
-    badgeType: "hot",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80",
-    description: "Industry-leading noise cancellation optimized with two processors and 8 microphones. Exceptional sound engineered to perfection with 30-hour battery life.",
-    inStock: true
-  },
-  {
-    id: 2,
-    name: "Apple Watch Ultra 2 Titanium GPS + Cellular",
-    category: "wearables",
-    categoryName: "Wearables",
-    price: 799.00,
-    oldPrice: 849.00,
-    rating: 4.8,
-    reviewsCount: 652,
-    badge: "Trending",
-    badgeType: "orange",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&auto=format&fit=crop&q=80",
-    description: "The most rugged and capable Apple Watch. Designed for outdoor adventure and endurance athletes with 49mm titanium case and precision dual-frequency GPS.",
-    inStock: true
-  },
-  {
-    id: 3,
-    name: "Minimalist Urban Leather Backpack",
-    category: "fashion",
-    categoryName: "Fashion & Bags",
-    price: 89.50,
-    oldPrice: 120.00,
-    rating: 4.7,
-    reviewsCount: 420,
-    badge: "-25% OFF",
-    badgeType: "sale",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=700&auto=format&fit=crop&q=80",
-    description: "Handcrafted water-resistant genuine leather travel backpack with 15.6-inch padded laptop sleeve and ergonomic airflow back cushioning.",
-    inStock: true
-  },
-  {
-    id: 4,
-    name: "Fujifilm X-T30 II Mirrorless Digital Camera",
-    category: "electronics",
-    categoryName: "Electronics",
-    price: 899.99,
-    oldPrice: 999.99,
-    rating: 4.9,
-    reviewsCount: 312,
-    badge: "Featured",
-    badgeType: "dark",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&auto=format&fit=crop&q=80",
-    description: "Compact, lightweight mirrorless camera featuring 26.1MP X-Trans CMOS 4 sensor, 4K/30p video, and Film Simulation modes for timeless photos.",
-    inStock: true
-  },
-  {
-    id: 5,
-    name: "Nike Air Max Pulse Lifestyle Sport Sneakers",
-    category: "fashion",
-    categoryName: "Fashion & Bags",
-    price: 159.00,
-    oldPrice: 190.00,
-    rating: 4.8,
-    reviewsCount: 890,
-    badge: "New Arrival",
-    badgeType: "orange",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=700&auto=format&fit=crop&q=80",
-    description: "Drawing inspiration from the London music scene, the Air Max Pulse brings a tough touch to the iconic Air Max line with point-loaded Air cushioning.",
-    inStock: true
-  },
-  {
-    id: 6,
-    name: "Logitech MX Master 3S Wireless Performance Mouse",
-    category: "electronics",
-    categoryName: "Electronics",
-    price: 99.99,
-    oldPrice: 109.99,
-    rating: 4.9,
-    reviewsCount: 2310,
-    badge: "Popular",
-    badgeType: "hot",
-    image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=700&auto=format&fit=crop&q=80",
-    description: "Quiet clicks and 8K DPI any-surface tracking. MagSpeed electromagnetic scrolling delivers 90% more speed and 87% more precision.",
-    inStock: true
-  },
-  {
-    id: 7,
-    name: "Aroma Ceramic Cold Mist Essential Oil Diffuser",
-    category: "home",
-    categoryName: "Home & Living",
-    price: 45.00,
-    oldPrice: 65.00,
-    rating: 4.6,
-    reviewsCount: 340,
-    badge: "-30% OFF",
-    badgeType: "sale",
-    image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=700&auto=format&fit=crop&q=80",
-    description: "Artisan matte ceramic ultrasonic diffuser with ambient warm light, silent operation, and auto shut-off for pure relaxation at home.",
-    inStock: true
-  },
-  {
-    id: 8,
-    name: "Keychron K2 Pro Wireless Mechanical Keyboard",
-    category: "electronics",
-    categoryName: "Electronics",
-    price: 119.00,
-    oldPrice: 139.00,
-    rating: 4.8,
-    reviewsCount: 780,
-    badge: "Hot Pick",
-    badgeType: "hot",
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=700&auto=format&fit=crop&q=80",
-    description: "QMK/VIA wireless mechanical keyboard with RGB backlighting, hot-swappable switches, and aluminum frame compatible with Mac and Windows.",
-    inStock: true
-  },
-  {
-    id: 9,
-    name: "Barista Touch Espresso Machine & Coffee Grinder",
-    category: "home",
-    categoryName: "Home & Living",
-    price: 649.99,
-    oldPrice: 799.99,
-    rating: 4.9,
-    reviewsCount: 560,
-    badge: "Premium",
-    badgeType: "dark",
-    image: "https://images.unsplash.com/photo-1517256064527-09c73fc73e38?w=700&auto=format&fit=crop&q=80",
-    description: "Third wave specialty coffee with intuitive touchscreen display. Automated pre-programmed café drinks menu and automatic microfoam milk texturing.",
-    inStock: true
-  },
-  {
-    id: 10,
-    name: "Ray-Ban Classic Aviator Polarized Sunglasses",
-    category: "fashion",
-    categoryName: "Fashion & Bags",
-    price: 174.00,
-    oldPrice: 215.00,
-    rating: 4.7,
-    reviewsCount: 1105,
-    badge: "-19% OFF",
-    badgeType: "sale",
-    image: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=700&auto=format&fit=crop&q=80",
-    description: "Timeless style meets modern technology. Crystal polarized green lenses encased in an iconic gold-tone metal frame with 100% UV protection.",
-    inStock: true
-  },
-  {
-    id: 11,
-    name: "JBL Flip 6 Portable Waterproof Bluetooth Speaker",
-    category: "audio",
-    categoryName: "Audio & Sound",
-    price: 129.95,
-    oldPrice: 149.95,
-    rating: 4.8,
-    reviewsCount: 1840,
-    badge: "Trending",
-    badgeType: "orange",
-    image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=700&auto=format&fit=crop&q=80",
-    description: "Bold sound for every adventure. IP67 waterproof and dustproof speaker with 12 hours of playtime and PartyBoost stereo pairing.",
-    inStock: true
-  },
-  {
-    id: 12,
-    name: "Garmin Forerunner 965 AMOLED GPS Running Watch",
-    category: "wearables",
-    categoryName: "Wearables",
-    price: 599.99,
-    oldPrice: 649.99,
-    rating: 4.9,
-    reviewsCount: 440,
-    badge: "Top Rated",
-    badgeType: "hot",
-    image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=700&auto=format&fit=crop&q=80",
-    description: "Brilliant 1.4-inch AMOLED touchscreen display with titanium bezel, built-in color maps, and advanced training metrics for elite runners.",
-    inStock: true
-  }
+let productsData = [
+ 
 ];
+
+
+
+
+async function loadProductsFromAPI() {
+
+    try {
+
+        const response = await fetch(
+            "http://127.0.0.1:8000/api/products/approved"
+        );
+
+
+        if (!response.ok) {
+            throw new Error("Failed to load products");
+        }
+
+
+        const data = await response.json();
+
+
+        const sellerProducts = data.map(product => ({
+
+            // avoid conflict with hardcoded IDs
+            id: product.id,
+
+
+            name: product.name,
+
+
+            category: product.category,
+
+
+            categoryName:
+                product.category_name ||
+                product.category,
+
+
+            price:
+                Number(product.price),
+
+
+            oldPrice:
+                product.old_price
+                ? Number(product.old_price)
+                : null,
+
+
+            rating:
+                Number(product.rating || 0),
+
+
+            reviewsCount:
+                product.reviews_count || 0,
+
+
+            badge:
+                product.badge || "New",
+
+
+            badgeType:
+                product.badge_type || "orange",
+
+
+            image:
+                product.image
+                ? (
+                    product.image.startsWith("http://") ||
+                    product.image.startsWith("https://")
+                    ? product.image
+                    : "http://127.0.0.1:8000" + product.image
+                )
+                : "https://via.placeholder.com/700",
+
+
+            description:
+                product.description,
+
+
+            inStock:
+                product.in_stock
+
+        }));
+
+
+        // ADD database products with existing products
+        productsData = [
+            ...productsData,
+            ...sellerProducts
+        ];
+
+
+        console.log(
+            "Products loaded:",
+            productsData
+        );
+
+
+        // refresh homepage
+        filterAndRenderProducts();
+
+
+    } catch(error) {
+
+
+        console.error(
+            "Product loading error:",
+            error
+        );
+
+
+    }
+
+}

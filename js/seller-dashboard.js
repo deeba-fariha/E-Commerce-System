@@ -3,6 +3,101 @@
 // Handles view switching, dynamic calculations, form validation, and data rendering.
 // ==========================================================================
 
+async function loadSellerDashboard(){
+
+    const sellerId = localStorage.getItem("seller_id");
+
+    if(!sellerId){
+        console.log("Seller ID missing");
+        return;
+    }
+
+
+    try{
+
+        const response = await fetch(
+            `http://127.0.0.1:8000/api/sellers/${sellerId}/dashboard`
+        );
+
+
+        const data = await response.json();
+
+
+        const seller = data.seller;
+        const stats = data.statistics;
+
+
+
+        document.getElementById(
+            "profileStoreName"
+        ).textContent = seller.store_name;
+
+
+
+        document.getElementById(
+            "profileOwnerName"
+        ).textContent = seller.store_name;
+
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent = seller.email;
+
+
+
+        document.getElementById(
+            "profilePhone"
+        ).textContent = seller.phone;
+
+
+
+        document.getElementById(
+            "statApproved"
+        ).textContent = stats.live_products;
+
+
+
+        document.getElementById(
+            "statPending"
+        ).textContent = stats.pending_products;
+
+
+
+        document.getElementById(
+            "sidebarSellerName"
+        ).textContent = seller.store_name;
+
+
+
+        document.getElementById(
+            "navbarSellerName"
+        ).textContent =
+        seller.store_name.split(" ")[0];
+
+
+
+        document.getElementById(
+            "dropdownSellerEmail"
+        ).textContent = seller.email;
+
+
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Dashboard loading error:",
+            error
+        );
+
+    }
+
+}
+
+
+
 // State Variables
 let currentActiveView = 'profile';
 let currentStatusFilter = 'all';
@@ -10,9 +105,15 @@ let currentUploadedImageDataUrl = '';
 
 // DOM Content Loaded Handler
 document.addEventListener('DOMContentLoaded', () => {
-  initDashboardNavigation();
-  initAddProductForm();
-  refreshAllDashboardData();
+
+    initDashboardNavigation();
+
+    initAddProductForm();
+
+    refreshAllDashboardData();
+
+    loadSellerDashboard();
+
 });
 
 // ==========================================================================
@@ -545,7 +646,7 @@ function renderStatusTable(filter = 'all') {
           <small class="d-block text-muted">${item.subcategory || ''}</small>
         </td>
         <td>
-          <span class="text-muted text-decoration-line-through">$${item.price.toFixed(2)}</span>
+          <span class="text-muted text-decoration-line-through">$${Number(item.price).toFixed(2)}</span>
           ${item.discount > 0 ? `<small class="badge bg-danger ms-1">-${item.discount}%</small>` : ''}
         </td>
         <td>
