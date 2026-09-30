@@ -16,6 +16,10 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/product-detail.css">
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/categories.js"></script>
 </head>
 <body>
 
@@ -68,11 +72,7 @@
           <form class="search-input-group" id="navbarSearchForm" onsubmit="return false;">
             <select class="category-select d-none d-sm-block" id="searchCategorySelect">
               <option value="all">All Categories</option>
-              <option value="electronics">Electronics</option>
-              <option value="audio">Audio & Sound</option>
-              <option value="wearables">Wearables</option>
-              <option value="fashion">Fashion</option>
-              <option value="home">Home & Living</option>
+              <!-- Categories are loaded from GET /api/categories (js/app.js) -->
             </select>
             <input type="text" class="search-input" id="navbarSearchInput" placeholder="Search 10,000+ premium products..." autocomplete="off">
             <button class="btn-search" type="button" id="btnNavbarSearch" title="Search">
@@ -90,15 +90,15 @@
             </a>
           </li>
 
-          <!-- Become a Seller -->
-          <li class="nav-item">
-            <a class="btn-orange-outline btn-sm text-nowrap" href="../seller/seller_form.html">
+          <!-- Become a Seller (hidden for logged-in sellers and admins) -->
+          <li class="nav-item" data-auth-hide-for="seller admin">
+            <a class="btn-orange-outline btn-sm text-nowrap" href="../account/seller_form.html">
               <i class="bi bi-shop-window"></i> Become a Seller
             </a>
           </li>
 
-          <!-- Login Button -->
-          <li class="nav-item">
+          <!-- Login dropdown / user avatar menu (rendered by js/auth.js) -->
+          <li class="nav-item" data-auth-menu>
             <a class="btn btn-charcoal btn-sm" href="../account/login.html">
               <i class="bi bi-person"></i> Login
             </a>
@@ -433,6 +433,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <!-- Application Logic Scripts -->
+  <script src="../js/auth.js"></script>
   <script src="../js/products.js"></script>
   <script src="../js/app.js"></script>
   <script src="../js/product-detail.js"></script>
@@ -449,14 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
     return;
   }
 
-  fetch(`http://127.0.0.1:8000/customer/reviews/product/${productId}`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error("Failed to load reviews");
-      }
-
-      return response.json();
-    })
+  apiFetch(`/customer/reviews/product/${productId}`)
     .then(reviews => {
 
       reviewsCount.textContent =
@@ -496,13 +490,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     })
     .catch(error => {
-      console.error("Review loading error:", error);
+      const message = document.createElement("div");
+      message.className = "text-muted";
+      message.textContent =
+        "Unable to load reviews. " + apiErrorMessage(error, "");
 
-      reviewsList.innerHTML = `
-        <div class="text-muted">
-          Unable to load reviews.
-        </div>
-      `;
+      reviewsList.replaceChildren(message);
     });
 
 });

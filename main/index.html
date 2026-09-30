@@ -15,6 +15,10 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <!-- Custom CSS -->
   <link rel="stylesheet" href="../css/style.css">
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/categories.js"></script>
 </head>
 <body>
 
@@ -67,11 +71,7 @@
           <form class="search-input-group" id="navbarSearchForm" onsubmit="return false;">
             <select class="category-select d-none d-sm-block" id="searchCategorySelect">
               <option value="all">All Categories</option>
-              <option value="electronics">Electronics</option>
-              <option value="audio">Audio & Sound</option>
-              <option value="wearables">Wearables</option>
-              <option value="fashion">Fashion</option>
-              <option value="home">Home & Living</option>
+              <!-- Categories are loaded from GET /api/categories (js/app.js) -->
             </select>
             <input type="text" class="search-input" id="navbarSearchInput" placeholder="Search 10,000+ premium products..." autocomplete="off">
             <button class="btn-search" type="button" id="btnNavbarSearch" title="Search">
@@ -89,63 +89,20 @@
             </a>
           </li>
 
-          <!-- Become a Seller -->
-          <li class="nav-item dropdown" id="loginNavBtn">
+          <!-- Become a Seller (hidden for logged-in sellers and admins) -->
+          <li class="nav-item" data-auth-hide-for="seller admin">
             <a class="btn-orange-outline btn-sm text-nowrap" href="../account/seller_form.html">
               <i class="bi bi-shop-window"></i> Become a Seller
             </a>
           </li>
 
-
-          <!-- Login Dropdown (Seller & Customer) -->
-          <li class="nav-item dropdown">
-            <button class="btn btn-charcoal btn-sm dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          <!-- Login dropdown / user avatar menu (rendered by js/auth.js) -->
+          <li class="nav-item" data-auth-menu>
+            <a class="btn btn-charcoal btn-sm" href="../account/login.html">
               <i class="bi bi-person"></i> Login
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end shadow-sm border p-2 login-dropdown-menu" aria-labelledby="loginDropdown" style="min-width: 250px; border-radius: 12px;">
-              <li class="px-2 py-1 mb-1">
-                <span class="d-block small text-muted">Select your portal</span>
-              </li>
-              <li><hr class="dropdown-divider my-1"></li>
-              <li>
-                <a class="dropdown-item py-2 px-2 rounded d-flex align-items-center gap-2 login-drop-item" href="../account/seller-login.html?role=seller">
-                  <span class="login-drop-icon seller-icon">
-                    <i class="bi bi-shop"></i>
-                  </span>
-                  <div>
-                    <strong class="d-block text-dark">Seller Login</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Manage store & products</small>
-                  </div>
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item py-2 px-2 rounded d-flex align-items-center gap-2 login-drop-item mt-1" href="../account/login.html?role=customer">
-                  <span class="login-drop-icon customer-icon">
-                    <i class="bi bi-person-check-fill"></i>
-                  </span>
-                  <div>
-                    <strong class="d-block text-dark">Customer Login</strong>
-                    <small class="text-muted d-block" style="font-size: 0.65rem;">Shop, cart & orders</small>
-                  </div>
-                </a>
-              </li>
-              <li><hr class="dropdown-divider my-1"></li>
-              <li class="px-2 pt-1 text-center">
-                <span class="small text-muted">New customer?</span>
-                <a href="../account/register.html" class="small text-warning fw-bold text-decoration-none ms-1">Sign up now</a>
-              </li>
-            </ul>
+            </a>
           </li>
 
-
-          <!--Add a placeeholder profile button-->
-          <li class="nav-item" id="profileNavBtn" style="display:none;">
-            <a class="btn btn-charcoal btn-sm" id="profileButton">
-                <i class="bi bi-person-circle"></i>
-            </a>
-        </li>
-        
-          
           <!-- Add to Cart Trigger -->
           <li class="nav-item">
             <button class="cart-trigger-btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas" title="Open Shopping Cart">
@@ -347,21 +304,7 @@
           <button class="category-pill active" data-category="all">
             <i class="bi bi-grid-fill"></i> All Products
           </button>
-          <button class="category-pill" data-category="electronics">
-            <i class="bi bi-laptop"></i> Electronics
-          </button>
-          <button class="category-pill" data-category="audio">
-            <i class="bi bi-headphones"></i> Audio & Sound
-          </button>
-          <button class="category-pill" data-category="wearables">
-            <i class="bi bi-smartwatch"></i> Wearables
-          </button>
-          <button class="category-pill" data-category="fashion">
-            <i class="bi bi-bag"></i> Fashion & Bags
-          </button>
-          <button class="category-pill" data-category="home">
-            <i class="bi bi-house"></i> Home & Living
-          </button>
+          <!-- Category pills are loaded from GET /api/categories (js/app.js) -->
         </div>
 
         <!-- Sort Select Box -->
@@ -435,13 +378,8 @@
         <!-- Shop Categories -->
         <div class="col-lg-2 col-md-6 col-6">
           <h5 class="footer-title">Categories</h5>
-          <ul class="footer-links">
-            <li><a href="#" onclick="filterByCategory('electronics'); return false;"><i class="bi bi-chevron-right small"></i> Electronics</a></li>
-            <li><a href="#" onclick="filterByCategory('audio'); return false;"><i class="bi bi-chevron-right small"></i> Audio & Sound</a></li>
-            <li><a href="#" onclick="filterByCategory('wearables'); return false;"><i class="bi bi-chevron-right small"></i> Wearables</a></li>
-            <li><a href="#" onclick="filterByCategory('fashion'); return false;"><i class="bi bi-chevron-right small"></i> Fashion & Bags</a></li>
-            <li><a href="#" onclick="filterByCategory('home'); return false;"><i class="bi bi-chevron-right small"></i> Home & Living</a></li>
-          </ul>
+          <!-- Loaded from GET /api/categories (js/app.js) -->
+          <ul class="footer-links" id="footerCategoryLinks"></ul>
         </div>
 
         <!-- Seller Hub & Company -->
@@ -570,6 +508,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
   <!-- Application Logic Scripts -->
+  <script src="../js/auth.js"></script>
   <script src="../js/products.js"></script>
   <script src="../js/app.js"></script>
 

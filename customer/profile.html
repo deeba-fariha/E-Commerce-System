@@ -142,6 +142,9 @@
 
     </style>
 
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
 </head>
 
 
@@ -250,7 +253,7 @@
 
                     <!-- Profile -->
 
-                    <li class="nav-item">
+                    <li class="nav-item" data-auth-menu="user-only">
 
                         <a
                             class="btn btn-outline-dark"
@@ -375,7 +378,8 @@
 
                             <a
                                 class="nav-link text-danger"
-                                href="../account/login.html"
+                                href="#"
+                data-auth-logout
                                 id="logoutBtn"
                             >
 
@@ -628,6 +632,8 @@
 
     <!-- Bootstrap JS -->
 
+    <script src="../js/auth.js"></script>
+
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
@@ -640,7 +646,6 @@
 
    <script>
 
-const API_BASE = "http://127.0.0.1:8000";
 
 let currentUser = null;
 
@@ -792,22 +797,15 @@ document
     try{
 
 
-        const response = await fetch(
+        const result = await apiFetch(
 
-            `${API_BASE}/customer/profile/${currentUser.id}`,
+            `/customer/profile/${currentUser.id}`,
 
             {
 
                 method:"PUT",
 
-                headers:{
-
-                    "Content-Type":"application/json"
-
-                },
-
-
-                body:JSON.stringify(updateData)
+                body:updateData
 
             }
 
@@ -815,62 +813,39 @@ document
 
 
 
-        const result = await response.json();
+        // update local storage
+
+        localStorage.setItem(
+
+            "apexmart_user",
+
+            JSON.stringify(result)
+
+        );
 
 
 
-        if(response.ok){
+        currentUser = result;
 
 
 
-            // update local storage
-
-            localStorage.setItem(
-
-                "apexmart_user",
-
-                JSON.stringify(result)
-
-            );
+        document.getElementById("profileHeaderName")
+        .innerText =
+        result.first_name+" "+result.last_name;
 
 
 
-            currentUser = result;
+        showMessage(
+            "Profile updated successfully!",
+            "success"
+        );
 
 
 
-            document.getElementById("profileHeaderName")
-            .innerText =
-            result.first_name+" "+result.last_name;
+        document.getElementById("password").value="";
 
 
-
-            showMessage(
-                "Profile updated successfully!",
-                "success"
-            );
-
-
-
-            document.getElementById("password").value="";
-
-
-            setEditMode(false);
-
-
-        }
-
-
-        else{
-
-
-            showMessage(
-                result.detail,
-                "danger"
-            );
-
-
-        }
+        setEditMode(false);
 
 
 
@@ -879,11 +854,8 @@ document
     catch(error){
 
 
-        console.log(error);
-
-
         showMessage(
-            "Server connection failed",
+            apiErrorMessage(error, "Profile update failed."),
             "danger"
         );
 
@@ -939,22 +911,7 @@ function showMessage(message,type){
 
 
 
-// ===============================
-// LOGOUT
-// ===============================
-
-
-document
-.getElementById("logoutBtn")
-.addEventListener("click",()=>{
-
-
-    localStorage.removeItem(
-        "apexmart_user"
-    );
-
-
-});
+// Logout is handled by js/auth.js (data-auth-logout)
 
 
 

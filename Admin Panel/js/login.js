@@ -13,21 +13,22 @@
 (function () {
   'use strict';
 
-  // Backend base URL — works when page is opened as file:// or via a server
-  var ADMIN_API = 'http://127.0.0.1:8000';
+  // Backend URL comes from ../js/config.js (API_BASE_URL) via apiFetch()
 
   // ── Auto-redirect if already logged in ─────────────────────────────────────
   var existingToken = localStorage.getItem('admin_token');
   if (existingToken) {
     // Quickly validate the stored token before redirecting
-    fetch(ADMIN_API + '/api/admin/me', {
+    apiFetch('/api/admin/me', {
       headers: { 'Authorization': 'Bearer ' + existingToken }
     })
-      .then(function (r) {
-        if (r.ok) window.location.href = 'index.html';
-        else localStorage.removeItem('admin_token');
+      .then(function () {
+        window.location.href = 'index.html';
       })
-      .catch(function () { /* server offline — stay on login */ });
+      .catch(function (error) {
+        // Invalid/expired token -> clear it; server offline -> stay on login
+        if (error instanceof ApiError && !error.network) ApexAuth.clearSession();
+      });
   }
 
   // ── DOM references ──────────────────────────────────────────────────────────
@@ -59,7 +60,11 @@
   }
 
   // ── Helper: show error ──────────────────────────────────────────────────────
-  function showError() {
+  var DEFAULT_ERROR = 'Invalid login credentials. Please try again.';
+  var errorText = document.getElementById('loginErrorText');
+
+  function showError(message) {
+    if (errorText) errorText.textContent = message || DEFAULT_ERROR;
     errorBox.style.display = 'block';
   }
 
@@ -84,28 +89,32 @@
 
       setLoading(true);
 
-      fetch(ADMIN_API + '/api/admin/login', {
+      apiFetch('/api/admin/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, username: username, password: password })
+        body: { email: email, username: username, password: password },
+        auth: false
       })
-        .then(function (res) {
-          if (!res.ok) throw new Error('bad_credentials');
-          return res.json();
-        })
         .then(function (data) {
-          // Store JWT and admin info
-          localStorage.setItem('admin_token', data.access_token);
-          if (data.admin) {
-            localStorage.setItem('admin_user',     JSON.stringify(data.admin));
-            localStorage.setItem('admin_username', data.admin.username || '');
-          }
+          // Shared session (../js/auth.js) so the storefront navbar shows
+          // the admin. The admin_* keys are what the panel itself reads.
+          var admin = data.admin || {};
+          ApexAuth.saveSession('admin', data.access_token, {
+            id: admin.id,
+            first_name: (admin.username || 'Admin').split(' ')[0],
+            name: admin.username || 'Admin',
+            email: admin.email || ''
+          }, {
+            admin_token: data.access_token,
+            admin_user: admin,
+            admin_username: admin.username || ''
+          });
           // Redirect into the Admin Panel
           window.location.href = 'index.html';
         })
-        .catch(function () {
+        .catch(function (error) {
           setLoading(false);
-          showError();
+          // 401 -> "Wrong email or password."; server down/CORS -> says so
+          showError(apiErrorMessage(error, DEFAULT_ERROR));
         });
     });
   }

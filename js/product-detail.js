@@ -470,35 +470,17 @@
       }
 
       // Send wishlist data to FastAPI
-      const response =
-        await fetch(
-          'http://127.0.0.1:8000/customer/wishlist',
+      const data =
+        await apiFetch(
+          '/customer/wishlist',
           {
             method: 'POST',
-
-            headers: {
-              'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
+            body: {
               user_id: userId,
               product_id: productId
-            })
+            }
           }
         );
-
-      const data =
-        await response.json();
-
-      if (!response.ok) {
-
-        console.error(
-          'Wishlist save failed:',
-          data
-        );
-
-        return;
-      }
 
       console.log(
         'Wishlist saved successfully:',
@@ -507,10 +489,14 @@
 
     } catch (error) {
 
-      console.error(
-        'Wishlist API error:',
-        error
+      const message = apiErrorMessage(
+        error,
+        'Could not save to your wishlist.'
       );
+
+      if (typeof showToast === 'function') {
+        showToast(message);
+      }
 
     }
   }
@@ -741,19 +727,9 @@
         try {
 
 
-            const response = await fetch(
-                `http://127.0.0.1:8000/api/products/${productId}`
+            const product = await apiFetch(
+                `/api/products/${productId}`
             );
-
-
-            if (!response.ok) {
-                throw new Error(
-                    "Product not found"
-                );
-            }
-
-
-            const product = await response.json();
 
 
 
@@ -799,9 +775,7 @@
 
 
                 image:
-                    product.image.startsWith("http")
-                    ? product.image
-                    : "http://127.0.0.1:8000" + product.image,
+                    apiAssetUrl(product.image),
 
 
                 description:
@@ -848,10 +822,12 @@
         } catch(error) {
 
 
-            console.error(
-                "Product loading error:",
-                error
-            );
+            // 404 = product not found; the "not found" view covers it.
+            // Anything else (server down, 500) also gets a toast.
+            if (!(error instanceof ApiError && error.status === 404)
+                && typeof showToast === "function") {
+                showToast(apiErrorMessage(error, "Could not load this product."));
+            }
 
 
             renderProductDetail(null);

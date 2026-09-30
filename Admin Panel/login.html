@@ -77,6 +77,9 @@
       margin-bottom: 1rem;
     }
   </style>
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
 </head>
 <body>
 
@@ -94,7 +97,7 @@
     <!-- Error message -->
     <div class="alert alert-danger py-2 px-3 small" id="loginError" role="alert">
       <i class="bi bi-exclamation-triangle-fill me-1"></i>
-      Invalid login credentials. Please try again.
+      <span id="loginErrorText">Invalid login credentials. Please try again.</span>
     </div>
 
     <form id="adminLoginForm" novalidate>
@@ -158,6 +161,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Login logic -->
+  <script src="../js/auth.js"></script>
   <script src="js/login.js"></script>
 
 </body>

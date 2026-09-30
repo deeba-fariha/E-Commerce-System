@@ -33,7 +33,7 @@ function statusBadge(status) {
     "Active": "green", "Delivered": "green", "Completed": "green", "Approved": "green", "In Stock": "green",
     "Processing": "blue", "Shipped": "blue",
     "Pending": "gold", "Pending Review": "gold",
-    "Out of Stock": "red", "Out of stock": "red", "Cancelled": "red", "Failed": "red", "Expired": "red", "Declined": "red",
+    "Out of Stock": "red", "Out of stock": "red", "Cancelled": "red", "Failed": "red", "Rejected": "red", "Expired": "red", "Declined": "red",
     "Draft": "grey"
   };
   const cls = map[status] || "grey";
@@ -128,7 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ── AUTHENTICATION GUARD ────────────────────────────────────────────────────
   // All admin panel pages require a valid JWT. Redirect to login if missing.
-  const ADMIN_API = 'http://127.0.0.1:8000';
   const _token = localStorage.getItem('admin_token');
   if (!_token) {
     window.location.href = 'login.html';
@@ -136,10 +135,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Validate token and load admin data for the UI
-  fetch(ADMIN_API + '/api/admin/me', {
-    headers: { 'Authorization': 'Bearer ' + _token }
-  })
-    .then(r => r.ok ? r.json() : Promise.reject('invalid_token'))
+  // (adminApi redirects to login.html on 401)
+  adminApi('/api/admin/me')
     .then(admin => {
       window.currentAdmin = admin;
       // Header avatar (2-letter initials)
@@ -157,10 +154,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const eEl = document.getElementById('settingsEmail');
       if (eEl) eEl.value = admin.email;
     })
-    .catch(() => {
-      localStorage.removeItem('admin_token');
-      localStorage.removeItem('admin_user');
-      localStorage.removeItem('admin_username');
+    .catch(error => {
+      if (error instanceof ApiError && error.network) {
+        // Server down / CORS: keep the login, just say so
+        showToast(error.message);
+        return;
+      }
+      ApexAuth.clearSession();
       window.location.href = 'login.html';
     });
   // ────────────────────────────────────────────────────────────────────────────
@@ -189,10 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
       if (confirm("Are you sure you want to log out of Apex Mart Admin?")) {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_user');
-        localStorage.removeItem('admin_username');
-        window.location.href = 'login.html';
+        ApexAuth.logout('login.html');
       }
     });
   }
@@ -259,22 +256,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/admin/profile', {
+        const updated = await adminApi('/api/admin/profile', {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify(payload)
+          body: payload
         });
-
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          showToast(err.detail || 'Profile update failed');
-          return;
-        }
-
-        const updated = await res.json();
         window.currentAdmin = updated;
 
         // Persist updated username
@@ -305,8 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         showToast('Profile updated successfully');
       } catch (err) {
-        console.error('Profile update error:', err);
-        showToast('Profile update failed — check connection');
+        showToast(apiErrorMessage(err, 'Profile update failed'));
       }
     });
   }
@@ -323,5 +307,12 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCustomers();
   renderOrders();
   renderPayments();
+
+  // Open a section from the URL, e.g. index.html#settings
+  // (the storefront "My Profile" link for admins uses this)
+  const initialSection = window.location.hash.slice(1);
+  if (initialSection && document.getElementById(initialSection)?.classList.contains("page")) {
+    goTo(initialSection);
+  }
 });
 

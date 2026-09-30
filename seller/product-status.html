@@ -18,6 +18,9 @@
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
 </head>
 
 <body>
@@ -109,13 +112,15 @@
 
 <!-- Existing Seller JavaScript -->
 <script src="../js/seller-db.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/seller-layout.js"></script>
 <script src="../js/seller-dashboard.js"></script>
 
 
 <script>
 
-const PRODUCT_API_URL = "http://127.0.0.1:8000/api/products";
+// Path only; apiFetch() (js/api.js) adds API_BASE_URL
+const PRODUCT_API_URL = "/api/products";
 
 let products = [];
 let currentFilter = "all";
@@ -165,22 +170,9 @@ async function loadProducts() {
 
     try {
 
-        const response = await fetch(
+        products = await apiFetch(
             `${PRODUCT_API_URL}/seller/${sellerId}`
         );
-
-
-        if (!response.ok) {
-
-            const errorData = await response.json().catch(() => null);
-
-            throw new Error(
-                errorData?.detail || "Failed to load products."
-            );
-        }
-
-
-        products = await response.json();
 
 
         updateCounts();
@@ -189,14 +181,12 @@ async function loadProducts() {
 
     } catch (error) {
 
-        console.error("Failed to load products:", error);
-
         tableBody.innerHTML = `
             <tr>
                 <td colspan="6" class="text-center text-danger py-4">
                     Failed to load products.
                     <br>
-                    <small>${escapeHtml(error.message)}</small>
+                    <small>${escapeHtml(apiErrorMessage(error, "Unknown error."))}</small>
                 </td>
             </tr>
         `;
@@ -330,11 +320,7 @@ function createProductRow(product) {
 
 
     const imageUrl = product.image
-    ? (
-        product.image.startsWith("http")
-            ? product.image
-            : "http://127.0.0.1:8000" + product.image
-      )
+    ? apiAssetUrl(product.image)
     : "";
 
 

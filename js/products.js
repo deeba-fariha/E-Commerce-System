@@ -10,17 +10,9 @@ async function loadProductsFromAPI() {
 
     try {
 
-        const response = await fetch(
-            "http://127.0.0.1:8000/api/products/approved"
+        const data = await apiFetch(
+            "/api/products/approved"
         );
-
-
-        if (!response.ok) {
-            throw new Error("Failed to load products");
-        }
-
-
-        const data = await response.json();
 
 
         const sellerProducts = data.map(product => ({
@@ -68,12 +60,7 @@ async function loadProductsFromAPI() {
 
             image:
                 product.image
-                ? (
-                    product.image.startsWith("http://") ||
-                    product.image.startsWith("https://")
-                    ? product.image
-                    : "http://127.0.0.1:8000" + product.image
-                )
+                ? apiAssetUrl(product.image)
                 : "https://via.placeholder.com/700",
 
 
@@ -107,10 +94,14 @@ async function loadProductsFromAPI() {
     } catch(error) {
 
 
-        console.error(
-            "Product loading error:",
-            error
+        const message = apiErrorMessage(
+            error,
+            "Could not load products."
         );
+
+        if (typeof showToast === "function") {
+            showToast(message);
+        }
 
 
     }

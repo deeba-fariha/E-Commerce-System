@@ -10,6 +10,10 @@
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+  <!-- Backend URL + shared API helpers (load before any other script) -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/categories.js"></script>
 </head>
 
 <body>
@@ -57,12 +61,8 @@
                             name="category"
                             required
                         >
-                            <option value="">Select Category...</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="audio">Audio &amp; Sound</option>
-                            <option value="wearables">Wearables</option>
-                            <option value="fashion">Fashion &amp; Bags</option>
-                            <option value="home">Home &amp; Living</option>
+                            <!-- Filled from GET /api/categories (below) -->
+                            <option value="">Loading categories...</option>
                         </select>
                     </div>
 
@@ -341,11 +341,34 @@ Bluetooth 5.3"
 
 <!-- Existing ApexMart JavaScript -->
 <script src="../js/products.js"></script>
+<script src="../js/auth.js"></script>
 <script src="../js/seller-layout.js"></script>
 <script src="../js/seller-dashboard.js"></script>
 <script>
 
-    const PRODUCT_API_URL = "http://127.0.0.1:8000/api/products";
+    // Path only; apiFetch() (js/api.js) adds API_BASE_URL
+    const PRODUCT_API_URL = "/api/products/";
+
+    /* Category dropdown: every category from the database
+       (option value = category id). */
+    document.addEventListener("DOMContentLoaded", async () => {
+        const select = document.getElementById("addProductCategory");
+
+        try {
+            const categories = await ApexCategories.load();
+
+            ApexCategories.fillSelect(select, categories, {
+                placeholder: "Select Category...",
+                value: "id"
+            });
+        } catch (error) {
+            select.replaceChildren(new Option("Could not load categories", ""));
+            alert(
+                "Could not load categories.\n\n" +
+                apiErrorMessage(error)
+            );
+        }
+    });
 
     function calculateProductSalePrice() {
         const regularPrice = parseFloat(
@@ -528,22 +551,24 @@ imageError.style.display = "none";
     const imageFormData = new FormData();
     imageFormData.append("image", imageFile);
 
-    const uploadResponse = await fetch(
-        "http://127.0.0.1:8000/api/products/upload-image",
-        {
-            method: "POST",
-            body: imageFormData
-        }
-    );
+    let uploadResult;
 
-    if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
-        throw new Error(
-            errorData.detail || "Image upload failed."
+    try {
+        uploadResult = await apiFetch(
+            "/api/products/upload-image",
+            {
+                method: "POST",
+                body: imageFormData
+            }
         );
+    } catch (error) {
+        // e.g. "Only JPG, PNG, WEBP, and GIF images are allowed."
+        alert(
+            "Image upload failed.\n\n" +
+            apiErrorMessage(error, "Please try another image.")
+        );
+        return;
     }
-
-    const uploadResult = await uploadResponse.json();
 
     imagePath = uploadResult.image;
 }
@@ -621,7 +646,7 @@ imageError.style.display = "none";
             const productData = {
                 seller_id: Number(sellerId),
                 name: name,
-                category: category,
+                category_id: Number(category),
                 brand: brand,
                 badge: badge || null,
                 stock: stock,
@@ -643,54 +668,15 @@ imageError.style.display = "none";
             try {
                 /*Send product to FastAPI.*/
 
-                const response = await fetch(
+                /* apiFetch throws ApiError with FastAPI's "detail"
+                   message (validation errors are joined per field). */
+                await apiFetch(
                         PRODUCT_API_URL,
                         {
                             method: "POST",
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-                            body:
-                                JSON.stringify(productData)
+                            body: productData
                         }
                     );
-
-                /*Read response safely.*/
-                let result = null;
-                try {
-                    result =
-                        await response.json();
-                } catch (jsonError) {
-                    result = null;
-                }
-                /*FastAPI returned an error. */
-                if (!response.ok) {
-                    let message =
-                        "Unable to submit product.";
-                    if (result) {
-                        if (result.detail) {
-                            if (
-                                Array.isArray(
-                                    result.detail
-                                )
-                            ) {
-                                message =
-                                    result.detail
-                                        .map(
-                                            error =>
-                                                error.msg ||
-                                                "Validation error"
-                                        )
-                                        .join("\n");
-                            } else {
-                                message =
-                                    result.detail;
-                            }
-                        }
-                    }
-                    throw new Error(message);
-                }
                 /* Product successfully created.*/
                 alert(
                     "Product submitted successfully.\n\n" +
@@ -726,26 +712,10 @@ imageError.style.display = "none";
                     .getElementById("addProductImagePreview")
                     .classList.add("d-none");
             } catch (error) {
-                console.error(
-                    "Product submission error:",
-                    error
+                alert(
+                    "Product submission failed.\n\n" +
+                    apiErrorMessage(error, "Unable to submit product.")
                 );
-
-                /* Connection error usually meansFastAPI is not running or the URL/port is incorrect. */
-                if (
-                    error instanceof
-                    TypeError
-                ) {
-                    alert(
-                        "Cannot connect to the server.\n\n" +
-                        "Please make sure FastAPI is running."
-                    );
-                } else {
-                    alert(
-                        "Product submission failed.\n\n" +
-                        error.message
-                    );
-                }
             } finally {
                 /*Enable submit button again.*/
                 submitButton.disabled = false;

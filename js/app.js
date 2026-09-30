@@ -13,7 +13,9 @@ let wishlist = JSON.parse(localStorage.getItem('apexmart_wishlist')) || [];
 const productsGridContainer = document.getElementById('productsGridContainer');
 const emptyStateContainer = document.getElementById('emptyStateContainer');
 const catalogCountDisplay = document.getElementById('catalogCountDisplay');
-const categoryPills = document.querySelectorAll('.category-pill');
+// Category pills are rendered from the database (loadCategoryControls)
+const categoryPillsWrap = document.getElementById('categoryPills');
+const footerCategoryLinks = document.getElementById('footerCategoryLinks');
 const productSortSelect = document.getElementById('productSortSelect');
 const navbarSearchInput = document.getElementById('navbarSearchInput');
 const btnNavbarSearch = document.getElementById('btnNavbarSearch');
@@ -35,27 +37,99 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     updateWishlistUI();
 
+    loadCategoryControls();
+
     await loadProductsFromAPI();
 
 });
 
+
+//  =
+// Categories (from GET /api/categories)
+//  =
+
+/**
+ * Fills the search-bar "All Categories" dropdown, the category filter
+ * pills and the footer category links from the database. Pages
+ * without these elements skip the request.
+ */
+async function loadCategoryControls() {
+  if (!searchCategorySelect && !categoryPillsWrap && !footerCategoryLinks) return;
+
+  let categories;
+  try {
+    categories = await ApexCategories.load();
+  } catch (error) {
+    showToast(apiErrorMessage(error, 'Could not load categories.'));
+    return;
+  }
+
+  ApexCategories.fillSelect(searchCategorySelect, categories, {
+    allOption: 'All Categories',
+    selected: currentCategory
+  });
+
+  if (categoryPillsWrap) {
+    const allPill = document.createElement('button');
+    allPill.className = 'category-pill';
+    allPill.dataset.category = 'all';
+    allPill.innerHTML = '<i class="bi bi-grid-fill"></i> All Products';
+
+    const pills = categories.map(category => {
+      const pill = document.createElement('button');
+      pill.className = 'category-pill';
+      pill.dataset.category = category.slug;
+
+      const icon = document.createElement('i');
+      icon.className = ApexCategories.iconClass(category);
+      pill.append(icon, ' ' + category.name);
+      return pill;
+    });
+
+    categoryPillsWrap.replaceChildren(allPill, ...pills);
+  }
+
+  if (footerCategoryLinks) {
+    footerCategoryLinks.replaceChildren(...categories.map(category => {
+      const item = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = '#';
+      link.innerHTML = '<i class="bi bi-chevron-right small"></i> ';
+      link.append(category.name);
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        filterByCategory(category.slug);
+      });
+      item.append(link);
+      return item;
+    }));
+  }
+
+  setActiveCategory(currentCategory);
+}
+
+/** Highlights the pill and syncs the search dropdown for a category slug */
+function setActiveCategory(cat) {
+  document.querySelectorAll('.category-pill').forEach(pill => {
+    pill.classList.toggle('active', pill.getAttribute('data-category') === cat);
+  });
+
+  if (searchCategorySelect) searchCategorySelect.value = cat;
+}
+
 // Event Listeners Initialization
 function initEventListeners() {
-  // Category Pills
-  categoryPills.forEach(pill => {
-    pill.addEventListener('click', () => {
-      categoryPills.forEach(p => p.classList.remove('active'));
-      pill.classList.add('active');
+  // Category Pills (one listener; pills are added after categories load)
+  if (categoryPillsWrap) {
+    categoryPillsWrap.addEventListener('click', event => {
+      const pill = event.target.closest('.category-pill');
+      if (!pill) return;
+
       currentCategory = pill.getAttribute('data-category');
-      
-      // Sync with top search category select if exists
-      if (searchCategorySelect) {
-        searchCategorySelect.value = currentCategory;
-      }
-      
+      setActiveCategory(currentCategory);
       filterAndRenderProducts();
     });
-  });
+  }
 
   // Sort Dropdown
   if (productSortSelect) {
@@ -94,14 +168,7 @@ function initEventListeners() {
   if (searchCategorySelect) {
     searchCategorySelect.addEventListener('change', (e) => {
       currentCategory = e.target.value;
-      // Sync pill active state
-      categoryPills.forEach(pill => {
-        if (pill.getAttribute('data-category') === currentCategory) {
-          pill.classList.add('active');
-        } else {
-          pill.classList.remove('active');
-        }
-      });
+      setActiveCategory(currentCategory);
       filterAndRenderProducts();
     });
   }
@@ -243,16 +310,9 @@ function resetFilters() {
   currentSort = 'featured';
   
   if (navbarSearchInput) navbarSearchInput.value = '';
-  if (searchCategorySelect) searchCategorySelect.value = 'all';
   if (productSortSelect) productSortSelect.value = 'featured';
 
-  categoryPills.forEach(pill => {
-    if (pill.getAttribute('data-category') === 'all') {
-      pill.classList.add('active');
-    } else {
-      pill.classList.remove('active');
-    }
-  });
+  setActiveCategory('all');
 
   filterAndRenderProducts();
 }
@@ -260,14 +320,7 @@ function resetFilters() {
 // Filter by Category directly (e.g. from footer links)
 function filterByCategory(cat) {
   currentCategory = cat;
-  categoryPills.forEach(pill => {
-    if (pill.getAttribute('data-category') === cat) {
-      pill.classList.add('active');
-    } else {
-      pill.classList.remove('active');
-    }
-  });
-  if (searchCategorySelect) searchCategorySelect.value = cat;
+  setActiveCategory(cat);
   filterAndRenderProducts();
   scrollToProducts();
 }
@@ -512,17 +565,9 @@ async function openQuickView(productId) {
         const realProductId = String(productId).replace("db_", "");
 
 
-        const response = await fetch(
-            `http://127.0.0.1:8000/api/products/${realProductId}`
+        const product = await apiFetch(
+            `/api/products/${realProductId}`
         );
-
-
-        if (!response.ok) {
-            throw new Error("Product not found");
-        }
-
-
-        const product = await response.json();
 
 
         const quickViewContent =
@@ -563,9 +608,7 @@ async function openQuickView(productId) {
 
 
             image:
-                product.image.startsWith("http")
-                ? product.image
-                : "http://127.0.0.1:8000" + product.image,
+                apiAssetUrl(product.image),
 
 
             description:
@@ -779,9 +822,8 @@ async function openQuickView(productId) {
     } catch(error) {
 
 
-        console.error(
-            "Quick View Error:",
-            error
+        showToast(
+            apiErrorMessage(error, "Could not open product details.")
         );
 
 
@@ -807,36 +849,22 @@ async function handleAuthSubmit(mode) {
 
     try {
 
-      const response = await fetch("http://127.0.0.1:8000/customer/register", {
+      await apiFetch("/customer/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(userData)
+        body: userData,
+        auth: false
       });
 
+      showToast('Account created successfully! Welcome to ApexMart.');
 
-      if (response.ok) {
-
-        showToast('Account created successfully! Welcome to ApexMart.');
-
-        setTimeout(() => {
-          window.location.href = '../main/index.html';
-        }, 1500);
-
-      } 
-      else {
-
-        const error = await response.json();
-        alert(error.detail || "Registration failed");
-
-      }
+      setTimeout(() => {
+        window.location.href = '../main/index.html';
+      }, 1500);
 
 
     } catch(error) {
 
-      console.log(error);
-      alert("Server connection failed");
+      alert(apiErrorMessage(error, "Registration failed"));
 
     }
 
@@ -855,46 +883,38 @@ async function handleAuthSubmit(mode) {
 
     try {
 
-      const response = await fetch(
-        "http://127.0.0.1:8000/customer/login",
+      const data = await apiFetch("/customer/login", {
+        method: "POST",
+        body: loginData,
+        auth: false
+      });
+
+      const user = data.user;
+
+      // Shared session (js/auth.js). "apexmart_user" is still
+      // saved because the customer pages read it.
+      ApexAuth.saveSession(
+        "customer",
+        data.access_token,
         {
-          method: "POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body: JSON.stringify(loginData)
-        }
+          id: user.id,
+          first_name: user.first_name,
+          name: `${user.first_name} ${user.last_name}`,
+          email: user.email
+        },
+        { apexmart_user: user }
       );
 
+      showToast("Login successful!");
 
-      if(response.ok){
-
-        const user = await response.json();
-
-        localStorage.setItem(
-        "apexmart_user",
-        JSON.stringify(user)
-        );
-
-        showToast("Login successful!");
-
-        setTimeout(()=>{
-          window.location.href="../customer/dashboard.html";
-        },1500);
-
-      }
-      else{
-
-        alert("Invalid email or password");
-
-      }
-
+      setTimeout(()=>{
+        window.location.href="../customer/dashboard.html";
+      },1500);
 
     }
     catch(error){
 
-      console.log(error);
-      alert("Server connection failed");
+      alert(apiErrorMessage(error, "Invalid email or password"));
 
     }
 

@@ -11,6 +11,9 @@
 
         <link rel="stylesheet" href="../css/style.css">
         <link rel="stylesheet" href="../css/dashboard.css">
+      <!-- Backend URL + shared API helpers (load before any other script) -->
+      <script src="../js/config.js"></script>
+      <script src="../js/api.js"></script>
     </head>
 
     <body>
@@ -131,16 +134,9 @@
     }
 
     try {
-        const response = await fetch(
-            `http://127.0.0.1:8000/api/sellers/${sellerId}`
+        const data = await apiFetch(
+            `/api/sellers/${sellerId}`
         );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.detail || "Could not load seller information.");
-            return;
-        }
 
         document.getElementById("infoStoreName").value = data.store_name;
         document.getElementById("infoCategory").value = data.category;
@@ -152,10 +148,8 @@
         document.getElementById("infoPassword").value = "";
 
     } catch (error) {
-        console.error("Error loading seller profile:", error);
-
         alert(
-            "Cannot connect to the server. Please make sure FastAPI is running."
+            apiErrorMessage(error, "Could not load seller information.")
         );
     }
 }
@@ -192,23 +186,13 @@ async function handleSellerInfoSubmit(event) {
     }
 
     try {
-        const response = await fetch(
-            `http://127.0.0.1:8000/api/sellers/${sellerId}`,
+        const data = await apiFetch(
+            `/api/sellers/${sellerId}`,
             {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedData)
+                body: updatedData
             }
         );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            alert(data.detail || "Could not update seller information.");
-            return;
-        }
 
         // Update stored email if email was changed
         localStorage.setItem("seller_email", data.email);
@@ -219,10 +203,8 @@ async function handleSellerInfoSubmit(event) {
         alert("Seller information updated successfully.");
 
     } catch (error) {
-        console.error("Error updating seller profile:", error);
-
         alert(
-            "Cannot connect to the server. Please make sure FastAPI is running."
+            apiErrorMessage(error, "Could not update seller information.")
         );
     }
     }
@@ -236,6 +218,7 @@ async function handleSellerInfoSubmit(event) {
 
     <!-- Seller JavaScript -->
     <script src="../js/seller-db.js"></script>
+    <script src="../js/auth.js"></script>
     <script src="../js/seller-layout.js"></script>
     <script src="../js/seller-dashboard.js"></script>
 

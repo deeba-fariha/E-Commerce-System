@@ -15,12 +15,9 @@ async function loadSellerDashboard(){
 
     try{
 
-        const response = await fetch(
-            `http://127.0.0.1:8000/api/sellers/${sellerId}/dashboard`
+        const data = await apiFetch(
+            `/api/sellers/${sellerId}/dashboard`
         );
-
-
-        const data = await response.json();
 
 
         const seller = data.seller;
@@ -87,10 +84,13 @@ async function loadSellerDashboard(){
 
     catch(error){
 
-        console.error(
-            "Dashboard loading error:",
-            error
-        );
+        // Only API failures are shown; this script also runs on seller
+        // pages that don't have every element above.
+        if (error instanceof ApiError) {
+            showDashToast(error.message);
+        } else {
+            console.error("Dashboard loading error:", error);
+        }
 
     }
 
@@ -396,24 +396,13 @@ async function handleSellerInfoSubmit(e) {
         updatedProfile.password = password;
     }
     try {
-        const response = await fetch(
-            `http://127.0.0.1:8000/api/sellers/${sellerId}`,
+        await apiFetch(
+            `/api/sellers/${sellerId}`,
             {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedProfile)
+                body: updatedProfile
             }
         );
-        const data = await response.json();
-        if(!response.ok) {
-            alert(
-                data.detail ||
-                "Profile update failed."
-            );
-            return;
-        }
 
         showDashToast(
             "Seller information updated successfully!"
@@ -422,12 +411,8 @@ async function handleSellerInfoSubmit(e) {
         loadSellerProfile();
     }
     catch(error) {
-        console.error(
-            "Profile update error:",
-            error
-        );
         alert(
-            "Cannot connect to FastAPI server."
+            apiErrorMessage(error, "Profile update failed.")
         );
     }
 }

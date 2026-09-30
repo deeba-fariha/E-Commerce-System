@@ -1,202 +1,165 @@
 /**
  * ============================================================================
- * ADMIN PANEL - PRODUCT FORM MODAL MODULE (js/products-form.js)
+ * ADMIN PANEL - ADD PRODUCT MODAL (js/products-form.js)
  * ============================================================================
- * Handles the Add Product and Edit Product modal forms.
+ * Admin adds a product under any category:
+ *   POST /api/admin/products   (admin only)
  *
- * Requirements fulfilled:
- * 1. Product Name input
- * 2. Category selection from existing categories list
- * 3. Image URL input with preview box (styled according to product details page aspect ratio)
- * 4. Price (in BDT ৳)
- * 5. Product Details & FAQs (textarea)
- * 6. Stock Quantity (number)
- * 7. Status (In Stock / Out of Stock)
- * 8. Submit ("Add Product" / "Save Changes") and Cancel buttons at the bottom.
- *
- * Detailed comments added throughout so it can be easily updated in the future.
+ * Admin products have no seller and go live immediately (status
+ * "Approved"), so they appear on the home page right away.
+ * The category dropdown comes from GET /api/categories.
  */
+
+const PRODUCT_IMAGE_FALLBACK =
+  "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80";
+
+const formLabel = text =>
+  `<span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">${text}</span>`;
 
 /**
- * Opens the product add/edit modal form.
- * @param {string|null} editId - Product ID to edit, or null to add new product
- * @param {string|null} defaultCategory - Pre-selected category name if opened from category view
+ * Opens the Add Product modal.
+ * @param {number|null} defaultCategoryId - Pre-selected category (from the category view)
+ * @param {Function} [onSaved] - Called with the saved product
  */
-function openProductModal(editId = null, defaultCategory = null) {
-  const editing = products.find(p => p.id === editId);
+async function openProductModal(defaultCategoryId = null, onSaved = null) {
+  let categories;
+  try {
+    categories = await loadAdminCategories();
+  } catch (error) {
+    showToast(apiErrorMessage(error, "Could not load categories"));
+    return;
+  }
 
-  // Set modal title dynamically
-  document.getElementById("modalTitle").textContent = editing ? "Edit Product Details" : "Add New Product";
+  if (categories.length === 0) {
+    showToast("Add a category first");
+    return;
+  }
 
-  // Pre-fill values if editing, or set default initial values
-  const initialName = editing ? editing.name : "";
-  const initialCategory = editing ? editing.category : (defaultCategory || (categories[0] ? categories[0].name : "Kitchenware"));
-  const initialImage = editing ? (editing.image || "") : "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80";
-  const initialPrice = editing ? editing.price : "";
-  const initialDetails = editing ? (editing.details || "") : "";
-  const initialStock = editing ? editing.stock : 10;
-  const initialStatus = editing ? editing.status : "In Stock";
-  const initialSeller = editing ? (editing.sellerName || "Apex Store Direct") : "Apex Store Direct";
+  document.getElementById("modalTitle").textContent = "Add New Product";
 
-  // Render Form Content into modalBody
   document.getElementById("modalBody").innerHTML = `
-    <!-- ===================================================================== -->
-    <!-- ADD / EDIT PRODUCT FORM -->
-    <!-- ===================================================================== -->
-    <form id="productAdminForm" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 14px;">
-      
-      <!-- 1. PRODUCT NAME -->
+    <form id="productAdminForm" style="display: flex; flex-direction: column; gap: 14px;">
+
       <label class="form-group">
-        <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Product Name *</span>
-        <input type="text" id="mProductName" value="${initialName}" placeholder="e.g. Ceramic Pour-Over Coffee Set" required>
+        ${formLabel("Product Name *")}
+        <input type="text" id="mProductName" maxlength="255" placeholder="e.g. Ceramic Pour-Over Coffee Set" required>
       </label>
 
-      <!-- 2. CATEGORY SELECTION & STATUS -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
         <label class="form-group">
-          <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Category Selection *</span>
-          <select id="mProductCategory">
-            ${categories.map(c => `
-              <option value="${c.name}" ${initialCategory === c.name ? "selected" : ""}>
-                ${c.name}
-              </option>
-            `).join("")}
-          </select>
+          ${formLabel("Category *")}
+          <select id="mProductCategory" required></select>
         </label>
 
-        <!-- 7. STATUS (IN STOCK / OUT OF STOCK) -->
         <label class="form-group">
-          <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Availability Status *</span>
-          <select id="mProductStatus">
-            <option value="In Stock" ${initialStatus === "In Stock" ? "selected" : ""}>In Stock</option>
-            <option value="Out of Stock" ${initialStatus === "Out of Stock" ? "selected" : ""}>Out of Stock</option>
-          </select>
+          ${formLabel("Brand")}
+          <input type="text" id="mProductBrand" maxlength="255" placeholder="e.g. Apex">
         </label>
       </div>
 
-      <!-- 3. PRODUCT IMAGE URL & PREVIEW -->
       <div class="form-group">
-        <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Product Image URL *</span>
-        <input type="url" id="mProductImage" value="${initialImage}" placeholder="https://images.unsplash.com/photo-..." required>
-        
-        <!-- Live Image Preview (Styled according to product details page aspect ratio) -->
+        ${formLabel("Product Image URL")}
+        <input type="url" id="mProductImage" maxlength="1000" placeholder="https://images.unsplash.com/photo-...">
+
         <div class="product-img-preview-box" style="margin-top: 8px; padding: 10px; background: var(--canvas); border: 1px solid var(--line); border-radius: 6px; text-align: center;">
-          <span style="font-size: 11.5px; color: var(--muted); display: block; margin-bottom: 6px;">Image Preview (Product Details Page Display Ratio):</span>
-          <img id="mImgPreview" src="${initialImage}" alt="Product Preview" 
-               style="max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; border: 1px solid var(--line); background: #fff;"
-               onerror="this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80'">
+          <span style="font-size: 11.5px; color: var(--muted); display: block; margin-bottom: 6px;">Image Preview:</span>
+          <img id="mImgPreview" src="${PRODUCT_IMAGE_FALLBACK}" alt="Product Preview"
+               style="max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; border: 1px solid var(--line); background: #fff;">
         </div>
       </div>
 
-      <!-- 4. PRICE & 6. STOCK QUANTITY -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
         <label class="form-group">
-          <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Price (৳ BDT) *</span>
-          <input type="number" id="mProductPrice" value="${initialPrice}" min="0" step="1" placeholder="e.g. 1450" required>
+          ${formLabel("Price *")}
+          <input type="number" id="mProductPrice" min="0.01" step="0.01" placeholder="e.g. 49.99" required>
         </label>
 
         <label class="form-group">
-          <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Stock Quantity *</span>
-          <input type="number" id="mProductStock" value="${initialStock}" min="0" step="1" placeholder="e.g. 25" required>
+          ${formLabel("Old Price")}
+          <input type="number" id="mProductOldPrice" min="0.01" step="0.01" placeholder="optional">
+        </label>
+
+        <label class="form-group">
+          ${formLabel("Stock Quantity *")}
+          <input type="number" id="mProductStock" min="0" step="1" value="10" required>
         </label>
       </div>
 
-      <!-- SELLER BUSINESS NAME -->
       <label class="form-group">
-        <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Seller Business Name</span>
-        <input type="text" id="mProductSeller" value="${initialSeller}" placeholder="e.g. Apex Artisans">
+        ${formLabel("Description *")}
+        <textarea id="mProductDetails" rows="3" required placeholder="Product highlights, materials, care instructions…" style="width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: 13.5px;"></textarea>
       </label>
 
-      <!-- 5. PRODUCT DETAILS & FAQS -->
       <label class="form-group">
-        <span style="font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 4px; display: block;">Product Details & FAQs</span>
-        <textarea id="mProductDetails" rows="3" placeholder="Enter product highlights, material specs, care instructions, and FAQs..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: 13.5px;">${initialDetails}</textarea>
+        ${formLabel("Key Features (one per line)")}
+        <textarea id="mProductFeatures" rows="3" placeholder="40-hour battery&#10;Bluetooth 5.3" style="width: 100%; padding: 8px 12px; border: 1px solid var(--line); border-radius: 6px; font-family: inherit; font-size: 13.5px;"></textarea>
       </label>
 
-      <!-- SUBMIT & CANCEL BUTTONS IN THE BOTTOM OF THE FORM -->
-      <div class="modal-foot" style="margin-top: 10px; display: flex; justify-content: flex-end; gap: 10px;">
+      <p style="font-size: 12.5px; color: var(--muted); margin: 0;">
+        Products added by the admin go live on the home page immediately.
+      </p>
+
+      <div class="modal-foot" style="margin-top: 4px; display: flex; justify-content: flex-end; gap: 10px;">
         <button type="button" class="btn" id="mProductCancel">Cancel</button>
-        <button type="button" class="btn primary" id="mProductSubmit">
-          ${editing ? "Save Changes" : "Submit & Add Product"}
-        </button>
+        <button type="submit" class="btn primary" id="mProductSubmit">Add Product</button>
       </div>
-
     </form>
   `;
 
+  ApexCategories.fillSelect(document.getElementById("mProductCategory"), categories, {
+    placeholder: "Select category…",
+    value: "id",
+    selected: defaultCategoryId ?? ""
+  });
+
   openModal();
+  document.getElementById("mProductName").focus();
 
-  // Attach live image preview listener
-  const imgInput = document.getElementById("mProductImage");
+  // Live image preview
   const imgPreview = document.getElementById("mImgPreview");
-  if (imgInput && imgPreview) {
-    imgInput.addEventListener("input", (e) => {
-      imgPreview.src = e.target.value.trim() || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80";
-    });
-  }
+  imgPreview.addEventListener("error", () => { imgPreview.src = PRODUCT_IMAGE_FALLBACK; });
+  document.getElementById("mProductImage").addEventListener("input", e => {
+    imgPreview.src = e.target.value.trim() || PRODUCT_IMAGE_FALLBACK;
+  });
 
-  // Cancel Button Handler
   document.getElementById("mProductCancel").addEventListener("click", closeModal);
 
-  // Submit Button Handler
-  document.getElementById("mProductSubmit").addEventListener("click", () => {
-    const name = document.getElementById("mProductName").value.trim();
-    const category = document.getElementById("mProductCategory").value;
-    const image = document.getElementById("mProductImage").value.trim();
-    const price = Number(document.getElementById("mProductPrice").value) || 0;
-    const stock = Number(document.getElementById("mProductStock").value) || 0;
-    const status = document.getElementById("mProductStatus").value;
-    const sellerName = document.getElementById("mProductSeller").value.trim() || "Apex Store Direct";
-    const details = document.getElementById("mProductDetails").value.trim();
+  document.getElementById("productAdminForm").addEventListener("submit", async event => {
+    event.preventDefault();
 
-    // Validation
-    if (!name) {
-      showToast("Please enter a product name");
+    const value = id => document.getElementById(id).value.trim();
+    const oldPrice = value("mProductOldPrice");
+
+    const body = {
+      name: value("mProductName"),
+      category_id: Number(value("mProductCategory")),
+      brand: value("mProductBrand") || null,
+      image: value("mProductImage") || null,
+      price: value("mProductPrice"),
+      old_price: oldPrice || null,
+      stock: Number(value("mProductStock") || 0),
+      description: value("mProductDetails"),
+      features: value("mProductFeatures").split("\n").map(f => f.trim()).filter(Boolean)
+    };
+
+    if (!body.category_id) {
+      showToast("Please choose a category");
       return;
     }
-    if (price <= 0) {
-      showToast("Please enter a valid price");
-      return;
-    }
 
-    if (editing) {
-      // Update existing product
-      Object.assign(editing, {
-        name,
-        category,
-        image,
-        price,
-        stock,
-        status: stock === 0 ? "Out of Stock" : status,
-        sellerName,
-        details
-      });
-      showToast(`Product "${name}" updated successfully`);
-    } else {
-      // Add new product
-      const newProd = {
-        id: "P-" + (1000 + products.length + 1),
-        name,
-        category,
-        image: image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&auto=format&fit=crop&q=80",
-        price,
-        stock,
-        status: stock === 0 ? "Out of Stock" : status,
-        sellerName,
-        details
-      };
-      products.unshift(newProd);
-      showToast(`New product "${name}" added successfully`);
-    }
+    const submitBtn = document.getElementById("mProductSubmit");
+    submitBtn.disabled = true;
 
-    closeModal();
+    try {
+      const product = await adminApi("/api/admin/products", { method: "POST", body });
 
-    // Re-render relevant view
-    if (currentCategoryView) {
-      renderProductsForCategory(currentCategoryView);
-    } else if (typeof renderCategories === "function") {
-      renderCategories();
+      closeModal();
+      showToast(`"${product.name}" added — it is now live on the home page`);
+      if (onSaved) onSaved(product);
+    } catch (error) {
+      // e.g. "Old price must be higher than the price." — keep the form open
+      showToast(apiErrorMessage(error, "Could not add product"));
+      submitBtn.disabled = false;
     }
   });
 }
-

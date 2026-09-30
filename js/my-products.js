@@ -2,7 +2,8 @@
 // MY PRODUCTS - FastAPI + PostgreSQL
 // ============================================================
 
-const PRODUCT_API_BASE = "http://127.0.0.1:8000/api/products";
+// Path only; apiFetch() (js/api.js) adds API_BASE_URL
+const PRODUCT_API_BASE = "/api/products";
 
 
 // ============================================================
@@ -151,55 +152,9 @@ async function renderMyProductsTable(
         );
 
 
-        const response =
-            await fetch(apiUrl);
-
-
-        console.log(
-            "Seller products response status:",
-            response.status
-        );
-
-
-        // ----------------------------------------------------
-        // Read response
-        // ----------------------------------------------------
-
-        let products = [];
-
-        try {
-
-            products = await response.json();
-
-        } catch (jsonError) {
-
-            console.error(
-                "Could not read API response:",
-                jsonError
-            );
-
-            products = [];
-        }
-
-
-        console.log(
-            "Seller products API response:",
-            products
-        );
-
-
-        // ----------------------------------------------------
-        // API error
-        // ----------------------------------------------------
-
-        if (!response.ok) {
-
-            const message =
-                products?.detail ||
-                `HTTP error ${response.status}`;
-
-            throw new Error(message);
-        }
+        // apiFetch throws ApiError with FastAPI's "detail" message
+        let products =
+            await apiFetch(apiUrl);
 
 
         // ----------------------------------------------------
@@ -333,16 +288,14 @@ async function renderMyProductsTable(
 
             const productCategory =
                 escapeHtml(
-                    product.category || "N/A"
+                    product.category_name ||
+                    product.category ||
+                    "N/A"
                 );
 
             const imageUrl =
             product.image
-                ? (
-                    product.image.startsWith("http")
-                        ? product.image
-                        : `http://127.0.0.1:8000${product.image}`
-                )
+                ? apiAssetUrl(product.image)
                 : "https://placehold.co/80x80?text=No+Image";
 
             const price =
@@ -604,11 +557,6 @@ async function renderMyProductsTable(
 
     } catch (error) {
 
-        console.error(
-            "Error loading seller products:",
-            error
-        );
-
 
         tbody.innerHTML = `
             <tr>
@@ -628,8 +576,10 @@ async function renderMyProductsTable(
 
                     <small>
                         ${escapeHtml(
-                            error.message ||
-                            "Unknown server error."
+                            apiErrorMessage(
+                                error,
+                                "Unknown error."
+                            )
                         )}
                     </small>
 
@@ -664,25 +614,10 @@ async function viewProduct(productId) {
 
     try {
 
-        const response =
-            await fetch(
+        const data =
+            await apiFetch(
                 `${PRODUCT_API_BASE}/${productId}`
             );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            alert(
-                data.detail ||
-                "Product not found."
-            );
-
-            return;
-        }
 
 
         console.log(
@@ -704,13 +639,8 @@ async function viewProduct(productId) {
 
     } catch (error) {
 
-        console.error(
-            "View product error:",
-            error
-        );
-
         alert(
-            "Cannot connect to FastAPI server."
+            apiErrorMessage(error, "Product not found.")
         );
     }
 }
@@ -724,25 +654,10 @@ async function editProduct(productId) {
 
     try {
 
-        const response =
-            await fetch(
+        const product =
+            await apiFetch(
                 `${PRODUCT_API_BASE}/${productId}`
             );
-
-
-        const product =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            alert(
-                product.detail ||
-                "Product not found."
-            );
-
-            return;
-        }
 
 
         // ----------------------------------------------------
@@ -764,9 +679,10 @@ async function editProduct(productId) {
         ).value = product.brand || "";
 
 
+        // Options are category ids (loadCategoryDropdowns)
         document.getElementById(
             "editProductCategory"
-        ).value = product.category || "";
+        ).value = product.category_id || "";
 
 
         document.getElementById(
@@ -840,13 +756,8 @@ async function editProduct(productId) {
 
     } catch (error) {
 
-        console.error(
-            "Edit product error:",
-            error
-        );
-
         alert(
-            "Cannot connect to FastAPI server."
+            apiErrorMessage(error, "Product not found.")
         );
     }
 }
@@ -883,10 +794,12 @@ document
                         "editProductBrand"
                     ).value.trim(),
 
-                category:
-                    document.getElementById(
-                        "editProductCategory"
-                    ).value,
+                category_id:
+                    Number(
+                        document.getElementById(
+                            "editProductCategory"
+                        ).value
+                    ),
 
                 badge:
                     document.getElementById(
@@ -936,38 +849,13 @@ document
 
             try {
 
-                const response =
-                    await fetch(
-                        `${PRODUCT_API_BASE}/${productId}`,
-                        {
-                            method: "PUT",
-
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body:
-                                JSON.stringify(
-                                    productData
-                                )
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    alert(
-                        data.detail ||
-                        "Failed to update product."
-                    );
-
-                    return;
-                }
+                await apiFetch(
+                    `${PRODUCT_API_BASE}/${productId}`,
+                    {
+                        method: "PUT",
+                        body: productData
+                    }
+                );
 
 
                 // ------------------------------------------------
@@ -1020,13 +908,11 @@ document
 
             } catch (error) {
 
-                console.error(
-                    "Update product error:",
-                    error
-                );
-
                 alert(
-                    "Cannot connect to FastAPI server."
+                    apiErrorMessage(
+                        error,
+                        "Failed to update product."
+                    )
                 );
             }
 
@@ -1097,28 +983,12 @@ async function deleteProduct(productId) {
 
     try {
 
-        const response =
-            await fetch(
-                `${PRODUCT_API_BASE}/${productId}`,
-                {
-                    method: "DELETE"
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            alert(
-                data.detail ||
-                "Failed to delete product."
-            );
-
-            return;
-        }
+        await apiFetch(
+            `${PRODUCT_API_BASE}/${productId}`,
+            {
+                method: "DELETE"
+            }
+        );
 
 
         if (
@@ -1144,13 +1014,8 @@ async function deleteProduct(productId) {
 
     } catch (error) {
 
-        console.error(
-            "Delete product error:",
-            error
-        );
-
         alert(
-            "Cannot connect to FastAPI server."
+            apiErrorMessage(error, "Failed to delete product.")
         );
     }
 }
@@ -1186,39 +1051,15 @@ async function handleStockUpdate(
 
     try {
 
-        const response =
-            await fetch(
-                `${PRODUCT_API_BASE}/${productId}`,
-                {
-                    method: "PUT",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body: JSON.stringify({
-                        stock: stock
-                    })
+        await apiFetch(
+            `${PRODUCT_API_BASE}/${productId}`,
+            {
+                method: "PUT",
+                body: {
+                    stock: stock
                 }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        if (!response.ok) {
-
-            alert(
-                data.detail ||
-                "Failed to update stock."
-            );
-
-            await renderMyProductsTable();
-
-            return;
-        }
+            }
+        );
 
 
         if (
@@ -1238,16 +1079,46 @@ async function handleStockUpdate(
 
     } catch (error) {
 
-        console.error(
-            "Stock update error:",
-            error
-        );
-
         alert(
-            "Cannot connect to FastAPI server."
+            apiErrorMessage(error, "Failed to update stock.")
         );
 
         await renderMyProductsTable();
+    }
+}
+
+
+// ============================================================
+// CATEGORY DROPDOWNS (from GET /api/categories)
+// ============================================================
+// Filter: option value = slug (compared with product.category)
+// Edit form: option value = category id (sent as category_id)
+
+async function loadCategoryDropdowns() {
+
+    try {
+
+        const categories =
+            await ApexCategories.load();
+
+        ApexCategories.fillSelect(
+            document.getElementById("myProductsCategoryFilter"),
+            categories,
+            { allOption: "All Categories", value: "slug" }
+        );
+
+        ApexCategories.fillSelect(
+            document.getElementById("editProductCategory"),
+            categories,
+            { placeholder: "Select Category...", value: "id" }
+        );
+
+    } catch (error) {
+
+        alert(
+            "Could not load categories.\n\n" +
+            apiErrorMessage(error)
+        );
     }
 }
 
@@ -1260,17 +1131,7 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        console.log(
-            "My Products page loaded."
-        );
-
-        console.log(
-            "Current seller_id:",
-            localStorage.getItem(
-                "seller_id"
-            )
-        );
-
+        loadCategoryDropdowns();
 
         renderMyProductsTable();
 

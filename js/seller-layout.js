@@ -219,10 +219,9 @@
 })();
 
 
+// Clears the shared session (js/auth.js) and returns to the storefront
 function sellerLogout(){
 
-    localStorage.removeItem("seller_id");
-
-    window.location.href="../main/index.html";
+    ApexAuth.logout();
 
 }
