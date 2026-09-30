@@ -4,7 +4,9 @@ from sqlalchemy import (
     String,
     Float,
     ForeignKey,
+    DateTime,
 )
+from sqlalchemy.sql import func
 
 from ..database import Base
 
@@ -38,6 +40,20 @@ class User(Base):
     password = Column(
         String(255),
         nullable=False
+    )
+
+    # Added later: existing databases get these columns from
+    # app/migrations.py when the server starts.
+    created_at = Column(
+        DateTime(timezone=True),
+        default=func.now(),
+        server_default=func.now(),
+        nullable=False
+    )
+
+    last_login_at = Column(
+        DateTime(timezone=True),
+        nullable=True
     )
 
 

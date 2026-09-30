@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -21,6 +23,26 @@ class UserResponse(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class AdminCustomerResponse(BaseModel):
+    """A customer as listed in the Admin Panel (no password)."""
+    id: int
+    first_name: str
+    last_name: str
+    email: EmailStr
+    created_at: datetime | None = None
+    last_login_at: datetime | None = None
+
+    class Config:
+        from_attributes = True
+
+
+class CustomerLoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str = "customer"
+    user: UserResponse
 
 
 class UserUpdate(BaseModel):

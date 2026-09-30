@@ -11,6 +11,7 @@ from ..database import get_db
 from ..models.product import Product
 from ..models.seller import Seller
 from ..models import OrderItem
+from .categories import get_category_or_400, apply_category
 
 from ..schemas.product import (
     ProductCreate,
@@ -132,6 +133,16 @@ def create_product(
         )
 
     # -----------------------------------------------------
+    # Check category (by id, or slug from older forms)
+    # -----------------------------------------------------
+
+    category = get_category_or_400(
+        db,
+        category_id=product_data.category_id,
+        slug=product_data.category
+    )
+
+    # -----------------------------------------------------
     # Create product
     # -----------------------------------------------------
 
@@ -139,9 +150,9 @@ def create_product(
         # VERY IMPORTANT:
         # Save the seller ID coming from frontend
         seller_id=product_data.seller_id,
+        added_by_role="seller",
 
         name=product_data.name,
-        category=product_data.category,
         brand=product_data.brand,
 
         badge=product_data.badge,
@@ -160,15 +171,17 @@ def create_product(
         rating=product_data.rating,
         reviews=product_data.reviews,
 
-        # Newly added products start as Pending
+        # Seller products wait for admin approval
         status="Pending",
 
         # Keep additional database fields synchronized
-        category_name=product_data.category,
         reviews_count=product_data.reviews,
         badge_type=product_data.badge,
         in_stock=product_data.stock > 0
     )
+
+    # Sets category_id + the category / category_name text copies
+    apply_category(new_product, category)
 
     # -----------------------------------------------------
     # Save product
@@ -373,11 +386,15 @@ def update_product(
     # Update category
     # -----------------------------------------------------
 
-    if "category" in update_data:
-        product.category = update_data["category"]
+    if update_data.get("category_id") is not None or update_data.get("category"):
+        category = get_category_or_400(
+            db,
+            category_id=update_data.get("category_id"),
+            slug=update_data.get("category")
+        )
 
-        if "category_name" not in update_data:
-            product.category_name = update_data["category"]
+        # Sets category_id + the category / category_name text copies
+        apply_category(product, category)
 
     # -----------------------------------------------------
     # Update brand
@@ -446,12 +463,8 @@ def update_product(
     if "image" in update_data:
         product.image = update_data["image"]
 
-    # -----------------------------------------------------
-    # Update category_name
-    # -----------------------------------------------------
-
-    if "category_name" in update_data:
-        product.category_name = update_data["category_name"]
+    # category_name is not set directly any more: it always
+    # follows the product's category (see "Update category").
 
     # -----------------------------------------------------
     # Update badge_type

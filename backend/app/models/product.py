@@ -37,11 +37,31 @@ class Product(Base):
         index=True
     )
 
+    # Who added the product: "seller" (seller_id set, needs admin
+    # approval) or "admin" (seller_id empty, live immediately).
+    added_by_role = Column(
+        String(20),
+        nullable=False,
+        default="seller",
+        server_default="seller"
+    )
+
     name = Column(
         String(255),
         nullable=False
     )
 
+    # One category -> many products. Nullable only so existing rows
+    # could be linked by app/migrations.py; the API always sets it.
+    category_id = Column(
+        Integer,
+        ForeignKey("categories.id"),
+        nullable=True,
+        index=True
+    )
+
+    # Copy of the category's slug (e.g. "electronics"), kept in sync
+    # with category_id; the storefront filters by it.
     category = Column(
         String(100),
         nullable=False
@@ -114,6 +134,7 @@ class Product(Base):
 
     created_at = Column(
         DateTime(timezone=True),
+        default=func.now(),
         server_default=func.now()
     )
 

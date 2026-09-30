@@ -1,9 +1,23 @@
-from fastapi import APIRouter, Depends
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from sqlalchemy.orm import Session
 
 
 from ..database import get_db
+
+from ..core.security import (
+
+    password_hash,
+
+    create_access_token,
+
+    verify_customer_password,
+
+    is_password_hash
+
+)
 
 
 # Customer models
@@ -37,6 +51,8 @@ from ..schemas.customer import (
     UserResponse,
 
     UserLogin,
+
+    CustomerLoginResponse,
 
     UserUpdate,
 
@@ -86,6 +102,28 @@ def register_user(
 
 ):
 
+    existing_user = (
+
+        db.query(User)
+
+        .filter(User.email == user.email)
+
+        .first()
+
+    )
+
+
+    if existing_user:
+
+        raise HTTPException(
+
+            status_code=400,
+
+            detail="An account with this email already exists."
+
+        )
+
+
     new_user = User(
 
         first_name=user.first_name,
@@ -94,7 +132,7 @@ def register_user(
 
         email=user.email,
 
-        password=user.password
+        password=password_hash.hash(user.password)
 
     )
 
@@ -118,7 +156,7 @@ def register_user(
 
     "/login",
 
-    response_model=UserResponse
+    response_model=CustomerLoginResponse
 
 )
 
@@ -141,25 +179,47 @@ def login_user(
     )
 
 
-    if not existing_user:
+    if (
 
-        return {
+        not existing_user
 
-            "detail": "Invalid email or password"
+        or not verify_customer_password(user.password, existing_user.password)
 
-        }
+    ):
+
+        raise HTTPException(
+
+            status_code=401,
+
+            detail="Invalid email or password"
+
+        )
 
 
-    if existing_user.password != user.password:
+    # Upgrade an old plain-text password to a hash
+    if not is_password_hash(existing_user.password):
 
-        return {
-
-            "detail": "Invalid email or password"
-
-        }
+        existing_user.password = password_hash.hash(user.password)
 
 
-    return existing_user
+    existing_user.last_login_at = datetime.now(timezone.utc)
+
+    db.commit()
+
+    db.refresh(existing_user)
+
+
+    return {
+
+        "access_token": create_access_token(existing_user.id, "customer"),
+
+        "token_type": "bearer",
+
+        "role": "customer",
+
+        "user": existing_user
+
+    }
 
 
 
@@ -258,7 +318,7 @@ def update_profile(
 
     if user.password:
 
-        existing_user.password = user.password
+        existing_user.password = password_hash.hash(user.password)
 
 
     db.commit()

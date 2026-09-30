@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from pwdlib import PasswordHash
 
 from ..database import get_db
+from ..core.security import create_access_token
 from ..models.seller import Seller
 from ..schemas.seller import SellerCreate, SellerResponse
 
@@ -101,6 +102,9 @@ def login_seller(
 
     return {
         "message": "Seller login successful.",
+        "access_token": create_access_token(seller.id, "seller"),
+        "token_type": "bearer",
+        "role": "seller",
         "seller_id": seller.id,
         "store_name": seller.store_name,
         "email": seller.email,
