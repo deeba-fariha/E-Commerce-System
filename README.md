@@ -36,9 +36,22 @@ The project is split into two parts:
 - Manage store profile
 
 ### 🛡️ Admin
-- Admin registration and login (passwords hashed with Argon2)
-- Admin panel with modules for **categories, sellers, products, orders, customers, and payments**
-- Review and approve seller product submissions
+
+* Admin registration and login (passwords hashed with Argon2)
+* Admin dashboard with overview of website activities
+* Add, edit, and delete product categories
+* Add new products and manage product information
+* View, edit, and remove existing products
+* Review and manage seller accounts
+* Review and approve seller product submissions
+* View and manage customer list
+* View customer details and account status
+* View and manage orders
+* Track order status and order details
+* Manage payment records and transaction information
+* Review and manage customer reviews and ratings
+* Monitor sellers, products, customers, orders, and payments
+* Activate, deactivate, or remove sellers and customers when necessary
 
 ---
 
